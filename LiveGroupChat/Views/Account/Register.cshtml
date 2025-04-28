@@ -1,4 +1,5 @@
-﻿@{
+﻿@model LiveGroupChat.ViewModels.RegistrationViewModel
+@{
     ViewData["Title"] = "Rejestracja";
 }
 
@@ -16,28 +17,49 @@
         <div class="register-header">
             <h2>Rejestracja</h2>
         </div>
-        <form class="register-form">
-            <div class="form-group">
-                <label for="first-name">Imię</label>
-                <input type="text" id="first-name" name="first-name" placeholder="Wpisz swoje imię" required>
+        <form method="post">
+            <div>
+                <label for="FirstName">First Name</label>
+                <input type="text" id="FirstName" name="FirstName" value="@Model.FirstName" />
+                @if (ViewData.ModelState["FirstName"]?.Errors.Count > 0)
+                {
+                    <div class="error">@ViewData.ModelState["FirstName"]?.Errors[0]?.ErrorMessage</div>
+                }
             </div>
-            <div class="form-group">
-                <label for="last-name">Nazwisko</label>
-                <input type="text" id="last-name" name="last-name" placeholder="Wpisz swoje nazwisko" required>
+
+            <div>
+                <label for="LastName">Last Name</label>
+                <input type="text" id="LastName" name="LastName" value="@Model.LastName" />
+                @if (ViewData.ModelState["LastName"]?.Errors.Count > 0)
+                {
+                    <div class="error">@ViewData.ModelState["LastName"]?.Errors[0]?.ErrorMessage</div>
+                }
             </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Wpisz swój email" required>
+
+            <div>
+                <label for="Email">Email</label>
+                <input type="email" id="Email" name="Email" value="@Model.Email" />
+                @if (ViewData.ModelState["Email"]?.Errors.Count > 0)
+                {
+                    <div class="error">@ViewData.ModelState["Email"]?.Errors[0]?.ErrorMessage</div>
+                }
             </div>
-            <div class="form-group">
-                <label for="password">Hasło</label>
-                <input type="password" id="password" name="password" placeholder="Wpisz swoje hasło" required>
+
+            <div>
+                <label for="Password">Password</label>
+                <input type="password" id="Password" name="Password" value="@Model.Password" />
+                @if (ViewData.ModelState["Password"]?.Errors.Count > 0)
+                {
+                    <div class="error">@ViewData.ModelState["Password"]?.Errors[0]?.ErrorMessage</div>
+                }
             </div>
-            <div class="form-group">
-                <button type="submit" class="submit-btn">Zarejestruj się</button>
-            </div>
+
+            <button type="submit">Register</button>
         </form>
     </div>
 </div>
 </body>
 </html>
+
+
+
