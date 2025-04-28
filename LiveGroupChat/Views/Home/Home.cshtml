@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<LiveGroupChat.ViewModels.MessageViewModel>
+
+@{
     ViewData["Title"] = "Home - Czat";
 }
 
@@ -18,14 +20,17 @@
         </div>
         <div class="chat-window">
             <div class="message-container">
-                <p class="message">Cześć! Jak się masz?</p>
-                <p class="message">Witaj! Wszystko w porządku!</p>
-                <!-- Tutaj pojawią się wiadomości -->
+                @foreach (var message in Model)
+                {
+                    <p class="message">@message.Text</p>
+                }
             </div>
         </div>
         <div class="chat-footer">
-            <input type="text" placeholder="Napisz wiadomość..." class="chat-input">
-            <button class="send-btn">Wyślij</button>
+            <form asp-action="WriteMessage" method="post" style="display:flex; width: 100%;">
+                <input type="text" name="Text" placeholder="Napisz wiadomość..." class="chat-input" />
+                <button type="submit" class="send-btn">Wyślij</button>
+            </form>
         </div>
     </div>
 </div>

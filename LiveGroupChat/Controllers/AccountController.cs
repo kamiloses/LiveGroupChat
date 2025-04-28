@@ -40,5 +40,11 @@ public IActionResult Login(){
 }
 
 
+[Route("/account/login")]
+[HttpPost]
+public IActionResult Login(LoginViewModel loginModel){
+    return RedirectToAction("Home", "Home"); 
 }
-    
+
+
+}
