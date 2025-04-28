@@ -1,18 +1,33 @@
-﻿@model TModel
-
-@{
-    Layout = null;
+﻿@{
+    ViewData["Title"] = "Home - Czat";
 }
 
 <!DOCTYPE html>
-
-<html>
+<html lang="pl">
 <head>
-    <title>title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/home.css">
 </head>
 <body>
-<div>
-      
+<div class="chat-container">
+    <div class="chat-box">
+        <div class="chat-header">
+            <h2>Witaj w czacie!</h2>
+        </div>
+        <div class="chat-window">
+            <div class="message-container">
+                <p class="message">Cześć! Jak się masz?</p>
+                <p class="message">Witaj! Wszystko w porządku!</p>
+                <!-- Tutaj pojawią się wiadomości -->
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" placeholder="Napisz wiadomość..." class="chat-input">
+            <button class="send-btn">Wyślij</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>

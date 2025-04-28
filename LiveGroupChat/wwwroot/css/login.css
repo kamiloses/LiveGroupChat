@@ -1,0 +1,96 @@
+﻿/* Ogólny reset stylów */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Tło aplikacji */
+body {
+    background-color: #1c1c1c;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Kontener formularza */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background: linear-gradient(135deg, #2a2a2a, #333333);
+}
+
+/* Formularz logowania */
+.login-box {
+    background-color: #222222;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    width: 300px;
+    text-align: center;
+}
+
+/* Nagłówek */
+h2 {
+    color: #00ff99;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    background-color: #333333;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.login-btn {
+    background-color: #00ff99;
+    color: #222;
+    border: none;
+    padding: 15px;
+    width: 100%;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #33cc66;
+}
+
+.register-text {
+    color: #ccc;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.register-text a {
+    color: #00ff99;
+    text-decoration: none;
+}
+
+.register-text a:hover {
+    text-decoration: underline;
+}

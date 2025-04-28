@@ -1,6 +1,13 @@
-﻿namespace LiveGroupChat.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class HomeController
-{
-    
+namespace LiveGroupChat.Controllers;
+
+public class HomeController : Controller{
+
+    [Route("/home")]
+    public ActionResult Home()
+    {
+        
+        return View();
+    }
 }

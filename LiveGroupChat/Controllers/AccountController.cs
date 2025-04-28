@@ -1,6 +1,19 @@
-﻿namespace LiveGroupChat.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class AccountController
-{
-    
+namespace LiveGroupChat.Controllers;
+
+public class AccountController : Controller{
+
+
+[Route("/account/register")]
+public IActionResult Register(){
+    return View();
 }
+[Route("/account/login")]
+public IActionResult Login(){
+    return View();
+}
+
+
+}
+    

@@ -1,18 +1,28 @@
-﻿@model TModel
-
-@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
-
-<html>
+﻿<!DOCTYPE html>
+<html lang="pl">
 <head>
-    <title>title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie</title>
+    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
-<div>
-      
+<div class="login-container">
+    <div class="login-box">
+        <h2>Logowanie</h2>
+        <form>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Wprowadź swój email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Hasło</label>
+                <input type="password" id="password" placeholder="Wprowadź swoje hasło" required>
+            </div>
+            <button type="submit" class="login-btn">Zaloguj się</button>
+        </form>
+        <p class="register-text">Nie masz konta? <a href="#">Zarejestruj się</a></p>
+    </div>
 </div>
 </body>
 </html>

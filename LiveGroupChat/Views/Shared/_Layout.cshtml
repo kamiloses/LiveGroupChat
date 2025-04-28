@@ -1,11 +1,23 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-    <title>@ViewData["Title"]=LiveGroupChat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - LiveGroupChat</title>
+    <link rel="stylesheet" href="~/css/register.css">  <!-- Zakładając, że masz plik styles.css w folderze wwwroot/css -->
 </head>
 <body>
-
-@RenderBody()
-
+<div class="chat-container">
+    <div class="chat-box">
+        <div class="header">
+            <h2>Czat na żywo</h2>
+        </div>
+        <div class="messages">
+            @RenderBody()  <!-- Treść wyświetlana z innych widoków -->
+        </div>
+        <textarea class="message-input" placeholder="Napisz coś..."></textarea>
+        <button class="send-btn">Wyślij</button>
+    </div>
+</div>
 </body>
 </html>
