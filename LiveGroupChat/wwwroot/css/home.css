@@ -61,11 +61,31 @@ body {
 .message {
     margin: 10px 0;
     padding: 10px;
-    background-color: #444;
     border-radius: 10px;
     max-width: 70%;
-    align-self: flex-start; /* Wiadomości wyrównane do lewej */
+    align-self: flex-start; /* Domyślnie wiadomości wyrównane do lewej */
 }
+
+/* Wiadomość po prawej stronie */
+.message.right {
+    background-color: #4CAF50; /* Zielony dla wiadomości "Nowak" */
+    align-self: flex-end; /* Wiadomości wyrównane do prawej */
+ /*//   background-color: red;*/
+    
+    
+}
+
+.message.left {
+    background-color: #444;
+    
+    align-self: flex-start; /* Wiadomości wyrównane do prawej */
+    /*//   background-color: red;*/
+
+    
+}
+
+
+
 
 /* Stopka czatu (pole tekstowe i przycisk wysyłania) */
 .chat-footer {

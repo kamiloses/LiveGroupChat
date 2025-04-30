@@ -22,14 +22,21 @@
             <div class="message-container">
                 @foreach (var message in Model)
                 {
-                    <div class="message">
+                    <div class="message @(message.User.LastName == "Nowak" ? "left" : "right")">
+
                         <div style="font-size: 0.9em; color: #ccc;">
                             <strong>@message.User.FirstName @message.User.LastName</strong>&nbsp;&nbsp;
-                            <span style="float: right;">@message.Created.ToString("dd.MM.yyyy, HH:mm")</span>
+                            @if (message.Created < DateTime.Now.AddDays(-1))
+                            {
+                                <span>@message.Created.ToString("dd.MM.yyyy")</span>
+                            }
+                            else
+                            {
+                                <span style="float: right;">@message.Created.ToString("dd.MM.yyyy, HH:mm")</span>
+                            }
                         </div>
                         <div>@message.Text</div>
                     </div>
-
                 }
             </div>
         </div>
