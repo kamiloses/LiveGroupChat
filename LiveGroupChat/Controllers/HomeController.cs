@@ -1,4 +1,5 @@
-﻿using LiveGroupChat.ViewModels;
+﻿using LiveGroupChat.Models;
+using LiveGroupChat.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LiveGroupChat.Controllers;
@@ -15,7 +16,14 @@ public class HomeController : Controller{
     }
     [HttpPost]
     [Route("/home")]
-    public ActionResult WriteMessage(MessageViewModel message) {
+    public ActionResult WriteMessage(MessageViewModel message)
+    {
+        message.User = new UserViewModel(){FirstName = "Jan", LastName = "Kowalski"};
+       Random random= new Random();
+        if (random.Next(2) == 0) message.Created = DateTime.Now.AddDays(-1);
+        else message.Created = DateTime.Now;
+        
+        
         if (!string.IsNullOrWhiteSpace(message.Text)) 
         {
             messages.Add(message);
