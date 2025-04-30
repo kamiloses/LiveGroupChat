@@ -8,9 +8,43 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/home.css">
+    <style>
+        .message-content {
+            position: relative;
+            padding-right: 25px;
+        }
+        .reaction-button-wrapper {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+        }
+        .reaction-button {
+            font-size: 1.1em;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #ccc;
+        }
+        .reaction-popup {
+            display: none;
+            position: absolute;
+            bottom: 120%;
+            right: 0;
+            background-color: #222;
+            border: 1px solid #555;
+            border-radius: 10px;
+            padding: 5px 10px;
+            white-space: nowrap;
+            z-index: 100;
+        }
+        .reaction-popup span {
+            cursor: pointer;
+            font-size: 1.3em;
+            margin: 0 4px;
+        }
+    </style>
 </head>
 <body>
 <div class="chat-container">
@@ -23,9 +57,8 @@
                 @foreach (var message in Model)
                 {
                     <div class="message @(message.User.LastName == "Nowak" ? "left" : "right")">
-
                         <div style="font-size: 0.9em; color: #ccc;">
-                            <strong>@message.User.FirstName @message.User.LastName</strong>&nbsp;&nbsp;
+                            <strong>@message.User.FirstName @message.User.LastName</strong>
                             @if (message.Created < DateTime.Now.AddDays(-1))
                             {
                                 <span>@message.Created.ToString("dd.MM.yyyy")</span>
@@ -35,7 +68,21 @@
                                 <span style="float: right;">@message.Created.ToString("dd.MM.yyyy, HH:mm")</span>
                             }
                         </div>
-                        <div>@message.Text</div>
+
+                        <div class="message-content">
+                            @message.Text
+
+                            <div class="reaction-button-wrapper">
+                                <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
+                                <div class="reaction-popup">
+                                    <span onclick="sendReaction('dummy-id', '❤️')">❤️</span>
+                                    <span onclick="sendReaction('dummy-id', '😂')">😂</span>
+                                    <span onclick="sendReaction('dummy-id', '👍')">👍</span>
+                                    <span onclick="sendReaction('dummy-id', '😮')">😮</span>
+                                    <span onclick="sendReaction('dummy-id', '👎')">👎</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
@@ -48,15 +95,35 @@
         </div>
     </div>
 </div>
-</body>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/js/websocket.js"></script>
 
 <script>
     window.onload = function () {
-       connectToWebSocket();
+        connectToWebSocket();
     };
+
+    function toggleReactions(el) {
+        const popup = el.nextElementSibling;
+        document.querySelectorAll('.reaction-popup').forEach(p => {
+            if (p !== popup) p.style.display = 'none';
+        });
+        popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
+
+    function sendReaction(messageId, emoji) {
+        console.log(`Wysyłanie reakcji ${emoji} dla wiadomości ${messageId}`);
+        document.querySelectorAll('.reaction-popup').forEach(p => p.style.display = 'none');
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.reaction-button-wrapper')) {
+            document.querySelectorAll('.reaction-popup').forEach(p => p.style.display = 'none');
+        }
+    });
 </script>
 
+</body>
 </html>
