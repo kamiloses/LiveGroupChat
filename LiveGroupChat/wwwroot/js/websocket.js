@@ -12,10 +12,11 @@ function connectToWebSocket() {
     stompClient.connect({}, function (frame) {
 
         console.log('Connected: ' + frame);
-        
-       stompClient.subscribe('/topic/public/group', function (message) {
-           var activeUsers = JSON.parse(message.body);
 
-
-                
-            })}
+        // stompClient.subscribe('/topic/public/group',{// function (message) {
+        //  //   var activeUsers = JSON.parse(message.body);
+        //
+        //
+        //         
+        //      });}
+    })}
