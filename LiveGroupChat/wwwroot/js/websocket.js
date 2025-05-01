@@ -1,22 +1,36 @@
-﻿let stompClient = null
-let chatId = null;
-let currentSubscription = null;
-let isPublicChat="false";
+﻿function connectToWebSocket() {
+    const socket = new WebSocket("ws://" + window.location.host + "/ws");
 
-function connectToWebSocket() {
+    socket.onopen = () => {
+        console.log("ŁACZEE SIEE");
+        socket.send("Witaj serwerze!");
+    };
+
+}
 
 
-    const socket = new SockJS('http://localhost:8080/ws');
-    stompClient = Stomp.over(socket);
 
-    stompClient.connect({}, function (frame) {
 
-        console.log('Connected: ' + frame);
 
-        // stompClient.subscribe('/topic/public/group',{// function (message) {
-        //  //   var activeUsers = JSON.parse(message.body);
-        //
-        //
-        //         
-        //      });}
-    })}
+
+
+
+
+
+
+
+
+//
+// socket.onmessage = (event) => {
+//     const msg = document.createElement("div");
+//     msg.textContent = "Odebrano: " + event.data;
+//     document.getElementById("messages").appendChild(msg);
+// };
+//
+// socket.onclose = () => {
+//     console.log("Połączenie zamknięte");
+// };
+//
+// socket.onerror = (err) => {
+//     console.error("WebSocket error:", err);
+// };

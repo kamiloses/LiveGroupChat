@@ -121,7 +121,8 @@ body {
     position: relative;
     padding-right: 25px;
     word-wrap: break-word; /* Automatyczne łamanie długich słów */
-    overflow-wrap: break-word; /
+    overflow-wrap: break-word; /* Obsługuje inne przypadki łamania długich słów */
+    max-width: 400px; 
 }
 
 .reaction-button-wrapper {
