@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.SignalR;
 
 public class ChatHub : Hub
 {
-    // odpowiednik @MessageMapping("/chat")
-    public async Task SendMessage(string message)
+    // Metoda wywoływana przez klienta w celu wysłania wiadomości
+    public async Task SendMessage(string username, string message)
     {
-        // odpowiednik @SendTo("/topic/messages")
-        await Clients.All.SendAsync("ReceiveMessage", "Echo: " + message);
+        
+        
+        // Wysyłanie wiadomości do wszystkich połączonych klientów
+        await Clients.All.SendAsync("ReceiveMessage", username, message);
     }
 }

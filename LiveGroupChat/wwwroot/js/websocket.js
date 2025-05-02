@@ -1,39 +1,33 @@
-﻿
+﻿function connectToWebSocket() {
+    console.log("Próba połączenia z SignalR...");
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
 
+    // Nasłuchuj na wiadomości z serwera
+    connection.on("ReceiveMessage", (username, message) => {
+        console.log(`${username}: ${message}`);
+        // Możesz tu dodać logikę do wyświetlania wiadomości na stronie
+    });
 
-// function connectToWebSocket() {
-//     const socket = new WebSocket("ws://" + window.location.host + "/ws");
-//
-//     socket.onopen = () => {
-//         console.log("ŁACZEE SIEE");
-//         socket.send("Witaj serwerze!");
-//     };
-//
-// }
+    connection.start()
+        .then(() => {
+            console.log("Połączono z serwerem SignalR");
+        })
+        .catch(err => console.error("Błąd połączenia z SignalR: ", err));
 
+    // Możesz dodać funkcjonalność wysyłania wiadomości z klienta
+    document.querySelector(".send-btn").addEventListener("click", function(e) {
+        e.preventDefault();  // Zapobiegaj domyślnemu wysyłaniu formularza
+        const text = document.querySelector('input[name="Text"]').value;
+        const username = "Janek";  // Możesz pobrać nazwisko użytkownika z sesji lub innego źródła
 
-
-
-
-
-
-
-
-
-
-
-
-//
-// socket.onmessage = (event) => {
-//     const msg = document.createElement("div");
-//     msg.textContent = "Odebrano: " + event.data;
-//     document.getElementById("messages").appendChild(msg);
-// };
-//
-// socket.onclose = () => {
-//     console.log("Połączenie zamknięte");
-// };
-//
-// socket.onerror = (err) => {
-//     console.error("WebSocket error:", err);
-// };
+        connection.invoke("SendMessage", username, text)
+            .then(() => {
+                console.log("Wysłano wiadomość");
+            })
+            .catch(err => {
+                console.error("Błąd wysyłania wiadomości: ", err);
+            });
+    });
+}
