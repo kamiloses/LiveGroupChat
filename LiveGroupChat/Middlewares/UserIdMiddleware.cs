@@ -1,25 +1,29 @@
-﻿namespace LiveGroupChat.Middlewares;
-
-public class UserIdMiddleware
+﻿namespace LiveGroupChat.Middlewares
 {
-    private readonly RequestDelegate _next;
-
-    public UserIdMiddleware(RequestDelegate next)
+    public class UserIdMiddleware
     {
-        _next = next;
-    }
+        private readonly RequestDelegate _next;
+        private static readonly Random _random = new Random(); // statyczny, aby uniknąć problemu z seedem
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        // Sprawdzamy, czy ID użytkownika już istnieje w sesji
-        if (string.IsNullOrEmpty(context.Session.GetString("UserId")))
+        public UserIdMiddleware(RequestDelegate next)
         {
-            // Jeżeli nie, generujemy nowe ID i zapisujemy w sesji
-            var userId = Guid.NewGuid().ToString();
-            context.Session.SetString("UserId", userId);
+            _next = next;
         }
 
-        // Przekazujemy kontrolę do następnego middleware
-        await _next(context);
+        public async Task InvokeAsync(HttpContext context)
+        {
+            // Sprawdzamy, czy ID użytkownika już istnieje w sesji
+            var userIdString = context.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                // Generujemy losowe ID i zapisujemy w sesji
+                int userId = _random.Next(1, 1001); // zakres 1–1000 włącznie
+                context.Session.SetString("UserId", userId.ToString());
+            }
+
+            // Przekazujemy kontrolę do następnego middleware
+            await _next(context);
+        }
     }
 }

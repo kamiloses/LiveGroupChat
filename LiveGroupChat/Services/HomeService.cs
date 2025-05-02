@@ -8,31 +8,70 @@ public class HomeService
 {
     private readonly AppDbContext _context;
 
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public HomeService(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+    {
+        _context = context;
+        _httpContextAccessor = httpContextAccessor;
+    }
 
-    
+
     public void SendMessage(MessageViewModel message)
     {
 
         //1  pobieram jednego użytkownika
-        User user1 = new User() { Id = 1, FirstName = "Jan", LastName = "Nowak" };
-        User user2 = new User() { Id = 2, FirstName = "Maciej", LastName = "Kowalski" };
-        User user3 = new User() { Id = 3, FirstName = "Adam", LastName = "Nowacki" };
-        User user4 = new User() { Id = 4, FirstName = "Dawid", LastName = "Szymański" };
-        User user5 = new User() { Id = 5, FirstName = "Jakub", LastName = "Lewandowski" };
-        List<User> users = new List<User>() { user1, user2, user3, user4, user5 };
+        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId").Substring(0, 4));
+        User user1 = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
+        User user2 = new User() { Id = userId, FirstName = "Maciej", LastName = "Kowalski" };
+        User user3 = new User() { Id = userId, FirstName = "Jakub", LastName = "Lewandowski" };
+        List<User> users = new List<User>() { user1, user2, user3 };
         Random random = new Random();
         User randomUser = users[random.Next(users.Count)];
 
 
 
         //2 tworze obiekt message i zapisuje go (sprawdz potem by pusty string nie był wysyłany)
-        long randomNumber = random.NextInt64(1, 1000);
-        Message messageEntity = new Message() { User = randomUser, Text = message.Text! };
+        int randomNumber = random.Next(1, 1000);
+        Message messageEntity = new Message() {Id =randomNumber, User = randomUser, Text = message.Text! };
 
-        //message.User = new UserViewModel() { Id = randomNumber.ToString(), FirstName = "Maciej", LastName = "Nowak" };
         _context.Messages.Add(messageEntity);
 
 
 
     }
+    
+    public void AddEmoji(int messageId, string emoji)
+    {
+
+        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId").Substring(0, 4));
+
+        
+        //1  pobieram jednego użytkownika
+        User user1 = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
+        User user2 = new User() { Id = userId, FirstName = "Maciej", LastName = "Kowalski" };
+        List<User> users = new List<User>() { user1, user2};
+        Random random = new Random();
+        User randomUser = users[random.Next(users.Count)];
+        
+        
+        
+        //2 tworze obiekt reakcja na post
+        int reactionId = new Random().Next();
+        Reaction reaction = new Reaction(){Id = reactionId,Emoji = emoji,MessageId = messageId,UserId = randomUser.Id,User = randomUser };
+
+
+        //3 znajduje obiekt wiadomosci z bazy danych któremu dałem reakcje
+      Message message=  _context.Users.Single(user=>user.Equals(userId)).Messages.Single(message => message.Id == messageId);
+        
+        //4 czy ta oceniłem wczesniej wiadomosc reakcją
+        bool wasEvaluated= message.Reactions.Any(reaction => reaction.UserId == userId);
+        if (!wasEvaluated) {
+            message.Reactions.Add(reaction); }
+        else {
+            //todo transactional
+            var reactionToRemove = message.Reactions.Single(reaction => reaction.UserId == userId);
+            message.Reactions.Remove(reactionToRemove);
+            message.Reactions.Add(reaction);
+        }
+        }
 }

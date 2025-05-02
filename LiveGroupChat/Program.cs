@@ -1,5 +1,6 @@
 using LiveGroupChat.Data;
 using LiveGroupChat.Middlewares;
+using LiveGroupChat.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 
@@ -12,7 +13,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
+builder.Services.AddTransient<HomeService>();
 // Usługi RazorPages i kontrolerów
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
@@ -23,6 +24,8 @@ builder.Services.AddSignalR();
 // Konfiguracja DbContext z połączeniem do SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//usun zaraz to nizej
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
