@@ -70,21 +70,12 @@ body {
 .message.right {
     background-color: #4CAF50; /* Zielony dla wiadomości "Nowak" */
     align-self: flex-end; /* Wiadomości wyrównane do prawej */
- /*//   background-color: red;*/
-    
-    
 }
 
 .message.left {
     background-color: #444;
     align-self: flex-start; /* Wiadomości wyrównane do prawej */
-    /*//   background-color: red;*/
-
-    
 }
-
-
-
 
 /* Stopka czatu (pole tekstowe i przycisk wysyłania) */
 .chat-footer {
@@ -117,18 +108,22 @@ body {
 .send-btn:hover {
     background-color: #45a049;
 }
+
 .message-content {
     position: relative;
     padding-right: 25px;
     word-wrap: break-word; /* Automatyczne łamanie długich słów */
     overflow-wrap: break-word; /* Obsługuje inne przypadki łamania długich słów */
-    max-width: 400px; 
+    max-width: 400px;
 }
 
+/* Pozycjonowanie dla przycisku reakcji i popupu */
 .reaction-button-wrapper {
-    position: absolute;
+    position: absolute; /* Ustalamy pozycjonowanie absolutne w obrębie message-content */
     bottom: 2px;
     right: 2px;
+    display: flex;
+    align-items: center;
 }
 
 .reaction-button {
@@ -146,8 +141,8 @@ body {
 
 .reaction-popup {
     display: none;
-    position: absolute;
-    bottom: 120%;
+    position: absolute; /* Ustawiamy popup w obrębie message-content */
+    bottom: 120%; /* Popup pojawi się nad wiadomością */
     right: 0;
     background-color: #222;
     border: 1px solid #555;

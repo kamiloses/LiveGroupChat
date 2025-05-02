@@ -4,10 +4,41 @@
         .withUrl("/chatHub")
         .build();
 
-    // Nasłuchuj na wiadomości z serwera
     connection.on("ReceiveMessage", (username, message) => {
         console.log(`${username}: ${message}`);
-        // Możesz tu dodać logikę do wyświetlania wiadomości na stronie
+
+        const messageContainer = document.querySelector(".message-container");
+
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", username === "Nowak" ? "left" : "right");
+
+        messageDiv.innerHTML = `
+            <div style="font-size: 0.9em; color: #ccc;">
+                <strong>${escapeHtml(username)}</strong>
+                <span style="float: right;">${new Date().toLocaleString('pl-PL')}</span>
+            </div>
+            <div class="message-content">
+                ${escapeHtml(message)}
+                <div class="reaction-button-wrapper">
+                    <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
+                    <div class="reaction-popup">
+                        ${['❤️', '😂', '👍', '😮', '👎'].map(emoji => `
+                            <form method="post" action="/home/emoji" style="display:inline;">
+                                <input type="hidden" name="Id" value="0" />
+                                <input type="hidden" name="reaction" value="${emoji}" />
+                                <button type="submit" style="background:none; border:none; font-size:1.3em; cursor:pointer;">${emoji}</button>
+                            </form>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="reactions"></div>
+            </div>
+        `;
+
+        messageContainer.appendChild(messageDiv);
+
+        // Auto-scroll do dołu
+        messageContainer.scrollTop = messageContainer.scrollHeight;
     });
 
     connection.start()
@@ -16,18 +47,48 @@
         })
         .catch(err => console.error("Błąd połączenia z SignalR: ", err));
 
-    // Możesz dodać funkcjonalność wysyłania wiadomości z klienta
     document.querySelector(".send-btn").addEventListener("click", function(e) {
-        e.preventDefault();  // Zapobiegaj domyślnemu wysyłaniu formularza
-        const text = document.querySelector('input[name="Text"]').value;
-        const username = "Janek";  // Możesz pobrać nazwisko użytkownika z sesji lub innego źródła
+        e.preventDefault();
+        const textInput = document.querySelector('input[name="Text"]');
+        const text = textInput.value.trim();
+        const username = "Janek"; // Możesz to zmieniać dynamicznie jeśli potrzebujesz
+
+        if (text === "") return;
 
         connection.invoke("SendMessage", username, text)
             .then(() => {
                 console.log("Wysłano wiadomość");
+                textInput.value = ""; // wyczyść input po wysłaniu
             })
             .catch(err => {
                 console.error("Błąd wysyłania wiadomości: ", err);
             });
     });
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function toggleReactions(el) {
+    const popup = el.nextElementSibling;
+    document.querySelectorAll('.reaction-popup').forEach(p => {
+        if (p !== popup) p.style.display = 'none';
+    });
+    popup.style.display = popup.style.display === "block" ? "none" : "block";
+}
+
+document.addEventListener('click', function (e) {
+    if (!e.target.closest('.reaction-button-wrapper')) {
+        document.querySelectorAll('.reaction-popup').forEach(p => p.style.display = 'none');
+    }
+});
+
+window.onload = function () {
+    connectToWebSocket();
+};
