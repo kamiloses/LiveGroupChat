@@ -38,7 +38,7 @@ app.Use(async (context, next) =>
 app.UseStaticFiles();
 app.UseRouting();
 app.MapRazorPages();
-app.MapControllers(); // <- DODAJ TO, jeśli używasz kontrolerów
+app.MapControllers(); 
 app.Run();
 
 static async Task Echo(WebSocket socket)

@@ -75,13 +75,25 @@
                             <div class="reaction-button-wrapper">
                                 <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
                                 <div class="reaction-popup">
-                                    <span onclick="sendReaction('dummy-id', '❤️')">❤️</span>
-                                    <span onclick="sendReaction('dummy-id', '😂')">😂</span>
-                                    <span onclick="sendReaction('dummy-id', '👍')">👍</span>
-                                    <span onclick="sendReaction('dummy-id', '😮')">😮</span>
-                                    <span onclick="sendReaction('dummy-id', '👎')">👎</span>
+                                    @foreach (var emoji in new[] { "❤️", "😂", "👍", "😮", "👎" })
+                                    {
+                                        <form method="post" action="/home/emoji" style="display:inline;">
+                                            <input type="hidden" name="Id" value="@message.Id" />
+                                            <input type="hidden" name="reaction" value="@emoji" /> 
+                                            <button type="submit" style="background:none; border:none; font-size:1.3em; cursor:pointer;">@emoji</button>
+                                        </form>
+                                    }
+
                                 </div>
                             </div>
+                            <div class="reactions">
+                                @foreach (var reaction in message.Reactions)
+                                {
+                                    <span style="font-size: 1.3em;">@reaction.Emoji</span>
+                                }
+                            </div>
+                            
+                            
                         </div>
                     </div>
                 }
@@ -114,11 +126,7 @@
         popup.style.display = popup.style.display === "block" ? "none" : "block";
     }
 
-    function sendReaction(messageId, emoji) {
-        console.log(`Wysyłanie reakcji ${emoji} dla wiadomości ${messageId}`);
-        document.querySelectorAll('.reaction-popup').forEach(p => p.style.display = 'none');
-    }
-
+  
     document.addEventListener('click', function (e) {
         if (!e.target.closest('.reaction-button-wrapper')) {
             document.querySelectorAll('.reaction-popup').forEach(p => p.style.display = 'none');

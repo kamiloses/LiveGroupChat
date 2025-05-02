@@ -11,13 +11,15 @@ public class HomeController : Controller{
     
     [Route("/home")]
     public ActionResult Home() {
+
         if (messages.Count > 5)messages.Clear();
         
 
         {
             
-        }
         
+        
+            }
         return View(messages);
     }
     [HttpPost]
@@ -44,6 +46,28 @@ public class HomeController : Controller{
         return RedirectToAction("Home", "Home");
     }
 
-    
+    [HttpPost]
+    [Route("/home/emoji")]
+    public ActionResult AddEmoji(int  id,String reaction)
+    { 
+        int reactionId = new Random().Next();
+        Reaction newReaction= new Reaction();
+         newReaction.Id = reactionId;
+         newReaction.Emoji=reaction;
+         newReaction.MessageId = id;
+         
+        messages[id].Reactions.Add(newReaction);    
+            
+        
+        
+        
+
+        return RedirectToAction("Home", "Home");
+    }
+
+        
+        
+        
+        
     
 }
