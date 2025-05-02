@@ -1,12 +1,15 @@
-﻿function connectToWebSocket() {
-    const socket = new WebSocket("ws://" + window.location.host + "/ws");
+﻿
 
-    socket.onopen = () => {
-        console.log("ŁACZEE SIEE");
-        socket.send("Witaj serwerze!");
-    };
 
-}
+// function connectToWebSocket() {
+//     const socket = new WebSocket("ws://" + window.location.host + "/ws");
+//
+//     socket.onopen = () => {
+//         console.log("ŁACZEE SIEE");
+//         socket.send("Witaj serwerze!");
+//     };
+//
+// }
 
 
 
