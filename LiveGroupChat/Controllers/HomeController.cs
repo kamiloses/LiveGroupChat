@@ -1,4 +1,5 @@
-﻿using LiveGroupChat.Models;
+﻿using LiveGroupChat.Data;
+using LiveGroupChat.Models;
 using LiveGroupChat.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ public class HomeController : Controller{
     
     private static readonly Dictionary<string,List<MessageViewModel>> messages = new Dictionary<string, List<MessageViewModel>>();
     private User user=new User();
+ 
     
     [Route("/home")]
     public ActionResult Home() {
@@ -60,8 +62,10 @@ public class HomeController : Controller{
         {
             // Dodaj wiadomość do listy w słowniku
             messages[userId].Add(message);
+             
+            
         }
-
+ 
         return RedirectToAction("Home", "Home");
     }
 
