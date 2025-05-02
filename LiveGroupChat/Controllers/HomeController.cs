@@ -8,9 +8,13 @@ public class HomeController : Controller{
 
     
     private static readonly List<MessageViewModel> messages = new List<MessageViewModel>();
-    
+    private String userId;
     [Route("/home")]
     public ActionResult Home() {
+         userId = HttpContext.Session.GetString("UserId").Substring(0,4);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("DZIAŁA"+userId);
+          
 
         if (messages.Count > 5)messages.Clear();
         
@@ -46,14 +50,20 @@ public class HomeController : Controller{
         return RedirectToAction("Home", "Home");
     }
 
+        int number = 0;
+        
     [HttpPost]
     [Route("/home/emoji")]
     public ActionResult AddEmoji(int  id,String reaction)
-    { 
+    {
+        
+        number++;
+        
         int reactionId = new Random().Next();
         Reaction newReaction= new Reaction();
          newReaction.Id = reactionId;
          newReaction.Emoji=reaction;
+         newReaction.Number=number;
          newReaction.MessageId = id;
          
         messages[id].Reactions.Add(newReaction);    
