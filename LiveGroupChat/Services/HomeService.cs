@@ -16,6 +16,39 @@ public class HomeService
     }
 
 
+
+    public List<Message> getAllMessages() {
+        
+        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId").Substring(0, 4));
+
+        if (_context.Users.Any(user => user.Id == userId)){
+            User user = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
+            _context.Users.Add(user); }
+
+        
+        // if (_context.Messages.Count() > 10)
+        // {
+        //     _context.Messages.RemoveRange(_context.Messages);
+        //     _context.SaveChanges();
+        // }
+        
+         
+        
+        return _context.Messages;
+            
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public void SendMessage(MessageViewModel message)
     {
 
@@ -59,10 +92,10 @@ public class HomeService
         int reactionId = new Random().Next();
         Reaction reaction = new Reaction(){Id = reactionId,Emoji = emoji,MessageId = messageId,UserId = randomUser.Id,User = randomUser };
 
-
-        //3 znajduje obiekt wiadomosci z bazy danych któremu dałem reakcje
-      Message message=  _context.Users.Single(user=>user.Equals(userId)).Messages.Single(message => message.Id == messageId);
         
+        //3 znajduje obiekt wiadomosci z bazy danych któremu dałem reakcje
+        Message message = _context.Messages.Single(message => message.UserId == userId && message.Id == messageId);
+
         //4 czy ta oceniłem wczesniej wiadomosc reakcją
         bool wasEvaluated= message.Reactions.Any(reaction => reaction.UserId == userId);
         if (!wasEvaluated) {

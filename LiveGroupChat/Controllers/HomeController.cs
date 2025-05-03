@@ -1,125 +1,46 @@
 ﻿using LiveGroupChat.Data;
 using LiveGroupChat.Models;
+using LiveGroupChat.Services;
 using LiveGroupChat.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LiveGroupChat.Controllers;
 
-public class HomeController : Controller{
+public class HomeController : Controller
+{
+    private static readonly Dictionary<string, List<MessageViewModel>> messages =
+        new Dictionary<string, List<MessageViewModel>>();
+
+    private User user = new User();
+    private readonly HomeService _homeService;
+
 
     
-    private static readonly Dictionary<string,List<MessageViewModel>> messages = new Dictionary<string, List<MessageViewModel>>();
-    private User user=new User();
- 
     
     [Route("/home")]
-    public ActionResult Home() {
-        String  userId = HttpContext.Session.GetString("UserId").Substring(0,4);
-         
-         
-        Console.ForegroundColor = ConsoleColor.Yellow;
-          user.Id=userId;
+    public ActionResult Home()
+    {
+       List<Message> messages =_homeService.getAllMessages();
+      List<MessageViewModel> mappedMessages= messages.Select(message => new MessageViewModel() {Id = message.Id,Created = DateTime.Now,Text = message.Text}).ToList();
+        return View(mappedMessages);
 
-          if (!messages.ContainsKey(userId))
-          {messages.Add(userId, new List<MessageViewModel>());
-              
-          }
-          
-          
-          
-        if (messages.Count > 5)messages.Clear();
-        var allMessages = messages.Values.SelectMany(list => list).ToList();
-        return View(allMessages);
-
-       // return View(messages.Values);
+    
     }
+
     [HttpPost]
     [Route("/home")]
     public ActionResult WriteMessage(MessageViewModel message)
     {
-        String userId = HttpContext.Session.GetString("UserId").Substring(0, 4);
-
-        Random random1 = new Random();
-        message.Id=random1.Next(0,1000);
-        if (random1.Next(2) == 0)  
-            message.User = new UserViewModel() {Id=userId, FirstName = "Jan", LastName = "Kowalski" };
-        else 
-            message.User = new UserViewModel() {Id=userId, FirstName = "Maciej", LastName = "Nowak" };
-
-        Random random = new Random();
-        if (random.Next(2) == 0) 
-            message.Created = DateTime.Now.AddDays(-1);
-        else 
-            message.Created = DateTime.Now;
-
-        // Upewnij się, że klucz istnieje w słowniku przed próbą dodania wiadomości
-        if (!messages.ContainsKey(userId))
-        {
-            messages.Add(userId, new List<MessageViewModel>());
-        }
-
-        if (!string.IsNullOrWhiteSpace(message.Text))
-        {
-            // Dodaj wiadomość do listy w słowniku
-            messages[userId].Add(message);
-             
-            
-        }
- 
+        _homeService.SendMessage(message);
         return RedirectToAction("Home", "Home");
     }
 
+    [HttpPost]
+    [Route("/home/emoji")]
+    public ActionResult AddEmoji(int id, string reaction)
+    {
+        _homeService.AddEmoji(id, reaction);
 
-        int number = 0;
-
-        [HttpPost]
-        [Route("/home/emoji")]
-        public ActionResult AddEmoji(int id, string reaction)
-        {
-            number++;
-
-            String userId = HttpContext.Session.GetString("UserId").Substring(0, 4);
-
-            int reactionId = new Random().Next();
-            Reaction newReaction = new Reaction();
-            newReaction.Id = reactionId;
-            newReaction.Emoji = reaction;
-            newReaction.Number = number;
-            newReaction.MessageId = id;
-            newReaction.UserId = userId;
-
-
-            var message = messages[userId].Single(message => message.Id == id);
-                
-           bool a= message.Reactions.Any(reaction => reaction.UserId == userId);
-              Console.WriteLine(a);
-           if (!a)
-           {
-               message.Reactions.Add(newReaction);
-              Console.Write("zrobione");               
-           }
-           else
-           {
-               var reactionToRemove = message.Reactions.Single(reaction => reaction.UserId == userId);
-               message.Reactions.Remove(reactionToRemove);
-               message.Reactions.Add(newReaction);
-           }
-           
-                           
-
-
-
-
-
-
-
-
-
-            return RedirectToAction("Home", "Home");
-        }
-
-        
-        
-        
-    
+        return RedirectToAction("Home", "Home");
+    }
 }
