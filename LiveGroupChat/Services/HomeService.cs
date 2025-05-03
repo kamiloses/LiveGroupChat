@@ -29,11 +29,11 @@ public class HomeService
         }
 
         
-        // if (_context.Messages.Count() > 10)
-        // {
-        //     _context.Messages.RemoveRange(_context.Messages);
-        //     _context.SaveChanges();
-        // }
+        if (_context.Messages.Count() > 6)
+        {
+            _context.Messages.RemoveRange(_context.Messages);
+            _context.SaveChanges();
+        }
         
          
         
@@ -53,17 +53,15 @@ public class HomeService
     
     public void SendMessage(MessageViewModel message)
     {
-        Console.BackgroundColor = ConsoleColor.Red;
-        Console.WriteLine("WYKONUJE");
 
         int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
-    
+        
         // Pobierz użytkownika z bazy danych
         var user = _context.Users.First(u => u.Id == userId);
-
+       Random random= new Random();
         // Tworzenie wiadomości
         var messageEntity = new Message
-        {
+        {   Id = random.Next(),
             Text = message.Text!,
             Created = DateTime.Now,
             UserId = user.Id,
@@ -96,7 +94,9 @@ public class HomeService
 
         
         //3 znajduje obiekt wiadomosci z bazy danych któremu dałem reakcje
-        Message message = _context.Messages.Single(message => message.UserId == userId && message.Id == messageId);
+        Console.BackgroundColor= ConsoleColor.Green;
+        Console.WriteLine(messageId + " UserId "+randomUser.Id);
+        Message message = _context.Messages.Single(message => message.UserId == randomUser.Id && message.Id == messageId);
 
         //4 czy ta oceniłem wczesniej wiadomosc reakcją
         bool wasEvaluated= message.Reactions.Any(reaction => reaction.UserId == userId);

@@ -25,4 +25,12 @@ public class ChatHub : Hub {
         // Wysyłanie wiadomości do wszystkich połączonych klientów
         await Clients.All.SendAsync("ReceiveMessage", username, message);
     }
+    public async Task GiveEmoji(int messageId, string emoji)
+    {
+        Console.WriteLine($"ODEBRAŁEM emoji: {emoji} dla wiadomości ID: {messageId}");
+        _homeService.AddEmoji(messageId, emoji);
+        await Clients.All.SendAsync("ReceiveEmoji");
+    }
+    
+    
 }

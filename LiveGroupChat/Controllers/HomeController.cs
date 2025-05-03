@@ -22,27 +22,21 @@ public class HomeController : Controller
     [Route("/home")]
     public ActionResult Home()
     {
-       List<Message> messages =_homeService.getAllMessages();
-      List<MessageViewModel> mappedMessages= messages.Select(message => new MessageViewModel() {Id = message.Id,Created = DateTime.Now,Text = message.Text}).ToList();
-        return View(mappedMessages);
-
+        List<Message> messages = _homeService.getAllMessages();
+        List<MessageViewModel> mappedMessages = messages.Select(message => new MessageViewModel()
+            { Id = message.Id, Created = DateTime.Now, Text = message.Text }).ToList();
+        
+        foreach (var messageViewModel in mappedMessages)
+        {
+            Console.WriteLine(messageViewModel.Id);
+        }
+        
+        
+        return View(mappedMessages); }
     
-    }
+    
+    
+    
 
-    // [HttpPost]
-    // [Route("/home")]
-    // public ActionResult WriteMessage(MessageViewModel message)
-    // {
-    //     _homeService.SendMessage(message);
-    //     return RedirectToAction("Home", "Home");
-    // }
-
-    [HttpPost]
-    [Route("/home/emoji")]
-    public ActionResult AddEmoji(int id, string reaction)
-    {
-        _homeService.AddEmoji(id, reaction);
-
-        return RedirectToAction("Home", "Home");
-    }
+//todo websockety złe id wyswietlają wiec to zmienic w bazie danych jest ok wszystko
 }
