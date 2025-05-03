@@ -1,5 +1,4 @@
-﻿using LiveGroupChat.Data;
-using LiveGroupChat.Models;
+﻿using LiveGroupChat.Models;
 using LiveGroupChat.ViewModels;
 
 namespace LiveGroupChat.Services;
@@ -18,9 +17,9 @@ public class HomeService
 
 
     public List<Message> getAllMessages() {
-        
-        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId").Substring(0, 4));
-
+         Console.Write("PRZED");
+        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+          Console.Write("DziałaA "+ userId);
         if (_context.Users.Any(user => user.Id == userId)){
             User user = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
             _context.Users.Add(user); }
@@ -34,7 +33,7 @@ public class HomeService
         
          
         
-        return _context.Messages;
+        return _context.Messages.ToList();
             
         
         
@@ -53,7 +52,7 @@ public class HomeService
     {
 
         //1  pobieram jednego użytkownika
-        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId").Substring(0, 4));
+        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
         User user1 = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
         User user2 = new User() { Id = userId, FirstName = "Maciej", LastName = "Kowalski" };
         User user3 = new User() { Id = userId, FirstName = "Jakub", LastName = "Lewandowski" };
@@ -76,7 +75,7 @@ public class HomeService
     public void AddEmoji(int messageId, string emoji)
     {
 
-        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId").Substring(0, 4));
+        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
 
         
         //1  pobieram jednego użytkownika

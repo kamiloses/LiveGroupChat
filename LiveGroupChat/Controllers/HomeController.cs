@@ -1,5 +1,4 @@
-﻿using LiveGroupChat.Data;
-using LiveGroupChat.Models;
+﻿using LiveGroupChat.Models;
 using LiveGroupChat.Services;
 using LiveGroupChat.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +13,12 @@ public class HomeController : Controller
     private User user = new User();
     private readonly HomeService _homeService;
 
+    public HomeController(HomeService homeService)
+    {
+        _homeService = homeService;
+    }
 
-    
-    
+
     [Route("/home")]
     public ActionResult Home()
     {

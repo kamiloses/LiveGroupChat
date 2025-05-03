@@ -1,4 +1,3 @@
-using LiveGroupChat.Data;
 using LiveGroupChat.Middlewares;
 using LiveGroupChat.Services;
 using Microsoft.EntityFrameworkCore;
