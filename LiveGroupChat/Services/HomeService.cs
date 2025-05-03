@@ -96,7 +96,7 @@ public class HomeService
         //3 znajduje obiekt wiadomosci z bazy danych któremu dałem reakcje
         Console.BackgroundColor= ConsoleColor.Green;
         Console.WriteLine(messageId + " UserId "+randomUser.Id);
-        Message message = _context.Messages.Single(message => message.UserId == randomUser.Id && message.Id == messageId);
+        Message message = _context.Messages.Single(message =>message.Id == messageId);//message.UserId == randomUser.Id &&
 
         //4 czy ta oceniłem wczesniej wiadomosc reakcją
         bool wasEvaluated= message.Reactions.Any(reaction => reaction.UserId == userId);

@@ -29,7 +29,8 @@ public class ChatHub : Hub {
     {
         Console.WriteLine($"ODEBRAŁEM emoji: {emoji} dla wiadomości ID: {messageId}");
         _homeService.AddEmoji(messageId, emoji);
-        await Clients.All.SendAsync("ReceiveEmoji");
+        await Clients.All.SendAsync("ReceiveEmoji", messageId, emoji);
+
     }
     
     
