@@ -1,7 +1,9 @@
-﻿namespace LiveGroupChat.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LiveGroupChat.Models
 {
     public class User
-    {
+    {[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";

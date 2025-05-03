@@ -1,7 +1,9 @@
-﻿namespace LiveGroupChat.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace LiveGroupChat.Models
 {
     public class Reaction
-    {
+    {[DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public string Emoji { get; set; } = "";

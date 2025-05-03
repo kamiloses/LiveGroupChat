@@ -20,9 +20,13 @@ public class HomeService
          Console.Write("PRZED");
         int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
           Console.Write("DziałaA "+ userId);
-        if (_context.Users.Any(user => user.Id == userId)){
+        if (!_context.Users.Any(user => user.Id == userId)){
             User user = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
-            _context.Users.Add(user); }
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.WriteLine("WYKONUJE");
+            _context.Users.Add(user); 
+            _context.SaveChanges();
+        }
 
         
         // if (_context.Messages.Count() > 10)
@@ -47,30 +51,29 @@ public class HomeService
     
     
     
-    
     public void SendMessage(MessageViewModel message)
     {
+        Console.BackgroundColor = ConsoleColor.Red;
+        Console.WriteLine("WYKONUJE");
 
-        //1  pobieram jednego użytkownika
         int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
-        User user1 = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
-        User user2 = new User() { Id = userId, FirstName = "Maciej", LastName = "Kowalski" };
-        User user3 = new User() { Id = userId, FirstName = "Jakub", LastName = "Lewandowski" };
-        List<User> users = new List<User>() { user1, user2, user3 };
-        Random random = new Random();
-        User randomUser = users[random.Next(users.Count)];
+    
+        // Pobierz użytkownika z bazy danych
+        var user = _context.Users.First(u => u.Id == userId);
 
-
-
-        //2 tworze obiekt message i zapisuje go (sprawdz potem by pusty string nie był wysyłany)
-        int randomNumber = random.Next(1, 1000);
-        Message messageEntity = new Message() {Id =randomNumber, User = randomUser, Text = message.Text! };
+        // Tworzenie wiadomości
+        var messageEntity = new Message
+        {
+            Text = message.Text!,
+            Created = DateTime.Now,
+            UserId = user.Id,
+            User = user
+        };
 
         _context.Messages.Add(messageEntity);
-
-
-
+        _context.SaveChanges();
     }
+
     
     public void AddEmoji(int messageId, string emoji)
     {

@@ -29,13 +29,13 @@ public class HomeController : Controller
     
     }
 
-    [HttpPost]
-    [Route("/home")]
-    public ActionResult WriteMessage(MessageViewModel message)
-    {
-        _homeService.SendMessage(message);
-        return RedirectToAction("Home", "Home");
-    }
+    // [HttpPost]
+    // [Route("/home")]
+    // public ActionResult WriteMessage(MessageViewModel message)
+    // {
+    //     _homeService.SendMessage(message);
+    //     return RedirectToAction("Home", "Home");
+    // }
 
     [HttpPost]
     [Route("/home/emoji")]
