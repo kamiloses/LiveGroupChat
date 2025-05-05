@@ -5,7 +5,7 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<User> Users { get; set; }
+    public DbSet<ApplicationUser> Users { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Reaction> Reactions { get; set; }
 
@@ -15,14 +15,14 @@ public class AppDbContext : DbContext
 
         // Relacja między Message a User
         modelBuilder.Entity<Message>()
-            .HasOne(m => m.User)
+            .HasOne(m => m.ApplicationUser)
             .WithMany() // Bez kolekcji w User
             .HasForeignKey(m => m.UserId)
             .OnDelete(DeleteBehavior.Restrict); // Brak kaskadowego usuwania
 
         // Relacja między Reaction a User
         modelBuilder.Entity<Reaction>()
-            .HasOne(r => r.User)
+            .HasOne(r => r.ApplicationUser)
             .WithMany() // Bez kolekcji w User
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict); // Brak kaskadowego usuwania

@@ -10,7 +10,7 @@ public class HomeController : Controller
     private static readonly Dictionary<string, List<MessageViewModel>> messages =
         new Dictionary<string, List<MessageViewModel>>();
 
-    private User user = new User();
+    private ApplicationUser _applicationUser = new ApplicationUser();
     private readonly HomeService _homeService;
 
     public HomeController(HomeService homeService)

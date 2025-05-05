@@ -21,10 +21,10 @@ public class HomeService
         int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
           Console.Write("DziałaA "+ userId);
         if (!_context.Users.Any(user => user.Id == userId)){
-            User user = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
+            ApplicationUser applicationUser = new ApplicationUser() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
             Console.BackgroundColor = ConsoleColor.Green;
             Console.WriteLine("WYKONUJE");
-            _context.Users.Add(user); 
+            _context.Users.Add(applicationUser); 
             _context.SaveChanges();
         }
 
@@ -65,7 +65,7 @@ public class HomeService
             Text = message.Text!,
             Created = DateTime.Now,
             UserId = user.Id,
-            User = user
+            ApplicationUser = user
         };
 
         _context.Messages.Add(messageEntity);
@@ -80,22 +80,22 @@ public class HomeService
 
         
         //1  pobieram jednego użytkownika
-        User user1 = new User() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
-        User user2 = new User() { Id = userId, FirstName = "Maciej", LastName = "Kowalski" };
-        List<User> users = new List<User>() { user1, user2};
+        ApplicationUser user1 = new ApplicationUser() { Id = userId, FirstName = "Jan", LastName = "Nowak" };
+        ApplicationUser user2 = new ApplicationUser() { Id = userId, FirstName = "Maciej", LastName = "Kowalski" };
+        List<ApplicationUser> users = new List<ApplicationUser>() { user1, user2};
         Random random = new Random();
-        User randomUser = users[random.Next(users.Count)];
+        ApplicationUser randomApplicationUser = users[random.Next(users.Count)];
         
         
         
         //2 tworze obiekt reakcja na post
         int reactionId = new Random().Next();
-        Reaction reaction = new Reaction(){Id = reactionId,Emoji = emoji,MessageId = messageId,UserId = randomUser.Id,User = randomUser };
+        Reaction reaction = new Reaction(){Id = reactionId,Emoji = emoji,MessageId = messageId,UserId = randomApplicationUser.Id,ApplicationUser = randomApplicationUser };
 
         
         //3 znajduje obiekt wiadomosci z bazy danych któremu dałem reakcje
         Console.BackgroundColor= ConsoleColor.Green;
-        Console.WriteLine(messageId + " UserId "+randomUser.Id);
+        Console.WriteLine(messageId + " UserId "+randomApplicationUser.Id);
         Message message = _context.Messages.Single(message =>message.Id == messageId);//message.UserId == randomUser.Id &&
 
         //4 czy ta oceniłem wczesniej wiadomosc reakcją
