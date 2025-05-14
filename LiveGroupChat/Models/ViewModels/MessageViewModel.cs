@@ -1,6 +1,6 @@
-﻿using LiveGroupChat.Models;
+﻿using LiveGroupChat.Models.Entities;
 
-namespace LiveGroupChat.ViewModels;
+namespace LiveGroupChat.Models.ViewModels;
 
 public class MessageViewModel
 {

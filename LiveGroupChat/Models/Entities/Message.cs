@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using LiveGroupChat.Models.IdentityEntities;
-
-namespace LiveGroupChat.Models
+﻿
+namespace LiveGroupChat.Models.Entities
 {
     public class Message
     {
@@ -10,7 +8,7 @@ namespace LiveGroupChat.Models
         public DateTime Created { get; set; }
 
         public int UserId { get; set; } 
-        public ApplicationUser ApplicationUser { get; set; } 
+        public User User { get; set; } 
 
         public List<Reaction> Reactions { get; set; } = new();
     }

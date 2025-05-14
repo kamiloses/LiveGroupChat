@@ -1,5 +1,6 @@
 using LiveGroupChat.Middlewares;
 using LiveGroupChat.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Usługi dla pamięci podręcznej i sesji
 builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddSession(options =>
 {
     options.Cookie.HttpOnly = true;
@@ -32,7 +34,7 @@ var app = builder.Build();
 app.UseSession();
 
 // Middleware do generowania UserId
-app.UseMiddleware<UserIdMiddleware>();
+//app.UseMiddleware<UserIdMiddleware>();
 
 // Usługi statyczne
 app.UseStaticFiles();

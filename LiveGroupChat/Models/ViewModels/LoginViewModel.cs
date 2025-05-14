@@ -1,4 +1,4 @@
-﻿namespace LiveGroupChat.ViewModels;
+﻿namespace LiveGroupChat.Models.ViewModels;
 
 public class LoginViewModel
 {

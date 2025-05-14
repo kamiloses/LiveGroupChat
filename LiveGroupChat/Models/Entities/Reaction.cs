@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using LiveGroupChat.Models.IdentityEntities;
-
-namespace LiveGroupChat.Models
+﻿
+namespace LiveGroupChat.Models.Entities
 {
     public class Reaction
     {
@@ -9,7 +7,7 @@ namespace LiveGroupChat.Models
 
         public string Emoji { get; set; } = "";
         public int UserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; } 
+        public User user { get; set; } 
 
         public int MessageId { get; set; }
         public Message Message { get; set; }

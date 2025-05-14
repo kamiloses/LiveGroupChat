@@ -1,5 +1,6 @@
-﻿using LiveGroupChat.Services;
-using LiveGroupChat.ViewModels;
+﻿using LiveGroupChat.Models.ViewModels;
+using LiveGroupChat.Services;
+using LiveGroupChat.Models.ViewModels;
 
 namespace LiveGroupChat.Middlewares;
 

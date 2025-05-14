@@ -1,6 +1,7 @@
 ﻿using LiveGroupChat.Models;
+using LiveGroupChat.Models.Entities;
 using LiveGroupChat.Services;
-using LiveGroupChat.ViewModels;
+using LiveGroupChat.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LiveGroupChat.Controllers;
@@ -10,7 +11,6 @@ public class HomeController : Controller
     private static readonly Dictionary<string, List<MessageViewModel>> messages =
         new Dictionary<string, List<MessageViewModel>>();
 
-    private ApplicationUser _applicationUser = new ApplicationUser();
     private readonly HomeService _homeService;
 
     public HomeController(HomeService homeService)
@@ -30,13 +30,5 @@ public class HomeController : Controller
         {
             Console.WriteLine(messageViewModel.Id);
         }
-        
-        
         return View(mappedMessages); }
-    
-    
-    
-    
-
-//todo websockety złe id wyswietlają wiec to zmienic w bazie danych jest ok wszystko
 }
