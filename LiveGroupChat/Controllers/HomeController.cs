@@ -25,18 +25,22 @@ public class HomeController : Controller
     {
         
         var userIdString = HttpContext.Session.GetString("UserId");
-
+        ViewData["UserId"] = userIdString;
         if (string.IsNullOrEmpty(userIdString))
         {
             return Redirect("/account/login");
         }
+        
+        
+        
         List<Message> messages = _homeService.getAllMessages();
         List<MessageViewModel> mappedMessages = messages.Select(message => new MessageViewModel()
-            { Id = message.Id, Created = DateTime.Now, Text = message.Text }).ToList();
+            { Id = message.Id,User = message.User, Created = DateTime.Now, Text = message.Text }).ToList();
+        
+                 
         
         foreach (var messageViewModel in mappedMessages)
         {
-            Console.WriteLine(messageViewModel.Id);
         }
         return View(mappedMessages); }
 }

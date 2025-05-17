@@ -1,5 +1,6 @@
 ﻿using LiveGroupChat.Models.Entities;
 using LiveGroupChat.Models.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace LiveGroupChat.Services;
 
@@ -20,7 +21,7 @@ public class HomeService
 
         if (!_context.Users.Any(user => user.Id == userId))
         {
-            User user = new User() { Id = userId };
+            User user = new User() { Id = userId,Nickname = "HomeService"};
             Console.BackgroundColor = ConsoleColor.Green;
             Console.WriteLine("WYKONUJE");
             _context.Users.Add(user);
@@ -33,7 +34,10 @@ public class HomeService
             _context.SaveChanges();
         }
 
-        return _context.Messages.ToList();
+       List<Message> a= _context.Messages.Include(user=>user.User).ToList();
+          Console.Write(a);
+
+        return _context.Messages.Include(user=>user.User).ToList();
     }
 
     public void SendMessage(MessageViewModel message)
@@ -41,7 +45,7 @@ public class HomeService
         int userId = message.User.Id;
         var user = _context.Users.First(u => u.Id == userId);
         Random random = new Random();
-
+                
         // Tworzenie wiadomości
         var messageEntity = new Message
         {

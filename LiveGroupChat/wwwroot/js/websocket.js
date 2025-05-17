@@ -9,7 +9,6 @@ function connectToWebSocket() {
 
     // Nasłuchiwanie nowych wiadomości
     connection.on("ReceiveMessage", (username, message) => {
-        console.log(`${username}: ${message}`);
 
         const messageContainer = document.querySelector(".message-container");
 
