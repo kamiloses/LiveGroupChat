@@ -12,6 +12,7 @@ public class HomeController : Controller
         new Dictionary<string, List<MessageViewModel>>();
 
     private readonly HomeService _homeService;
+    
 
     public HomeController(HomeService homeService)
     {
@@ -22,6 +23,13 @@ public class HomeController : Controller
     [Route("/home")]
     public ActionResult Home()
     {
+        
+        var userIdString = HttpContext.Session.GetString("UserId");
+
+        if (string.IsNullOrEmpty(userIdString))
+        {
+            return Redirect("/account/login");
+        }
         List<Message> messages = _homeService.getAllMessages();
         List<MessageViewModel> mappedMessages = messages.Select(message => new MessageViewModel()
             { Id = message.Id, Created = DateTime.Now, Text = message.Text }).ToList();

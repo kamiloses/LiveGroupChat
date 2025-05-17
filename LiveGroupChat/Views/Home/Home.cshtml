@@ -62,11 +62,11 @@ ViewData["Title"] = "Home - Czat";
             <div class="message-container">
                 @foreach (var message in Model)
                 {
-                <div class="message @(message.User?.LastName == "Nowak" ? "left" : "right")">
+                <div class="message @(message.User?.Nickname == "Nowak" ? "left" : "right")">
                     <div style="font-size: 0.9em; color: #ccc;">
                         @if (message.User != null)
                         {
-                        <strong>@message.User.FirstName @message.User.LastName</strong>
+                        <strong>@message.User.Nickname</strong>
                         }
                         else
                         {

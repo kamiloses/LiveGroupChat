@@ -1,27 +1,22 @@
 ﻿<!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logowanie</title>
+    <title>Join Chat</title>
     <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
 <div class="login-container">
     <div class="login-box">
-        <h2>Logowanie</h2>
+        <h2>Enter your nickname</h2>
         <form method="post">
             <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Wprowadź swój email" required>
+                <label for="username">Nickname</label>
+                <input type="text" id="username" name="username" placeholder="Enter your nickname" required>
             </div>
-            <div class="input-group">
-                <label for="password">Hasło</label>
-                <input type="password" id="password" placeholder="Wprowadź swoje hasło" required>
-            </div>
-            <button type="submit" class="login-btn">Zaloguj się</button>
+            <button type="submit" class="login-btn">Join Chat</button>
         </form>
-        <p class="register-text">Nie masz konta? <a href="#">Zarejestruj się</a></p>
     </div>
 </div>
 </body>

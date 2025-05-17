@@ -16,9 +16,7 @@ public class HomeService
 
     public List<Message> getAllMessages()
     {
-        Console.Write("PRZED");
         int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
-        Console.Write("DziałaA " + userId);
 
         if (!_context.Users.Any(user => user.Id == userId))
         {
@@ -40,16 +38,13 @@ public class HomeService
 
     public void SendMessage(MessageViewModel message)
     {
-        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
-
-        // Pobierz użytkownika z bazy danych
+        int userId = message.User.Id;
         var user = _context.Users.First(u => u.Id == userId);
         Random random = new Random();
 
         // Tworzenie wiadomości
         var messageEntity = new Message
         {
-            Id = random.Next(),
             Text = message.Text!,
             Created = DateTime.Now,
             UserId = user.Id,

@@ -12,7 +12,7 @@
 
         public async Task InvokeAsync(HttpContext context)
         {
-            // Sprawdzamy, czy ID użytkownika już istnieje w sesji
+          
             var userIdString = context.Session.GetString("UserId");
 
             if (string.IsNullOrEmpty(userIdString))

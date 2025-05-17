@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Usługi dla pamięci podręcznej i sesji
 builder.Services.AddDistributedMemoryCache();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options =>
 {
     options.Cookie.HttpOnly = true;
@@ -25,8 +25,6 @@ builder.Services.AddSignalR();
 // Konfiguracja DbContext z połączeniem do SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//usun zaraz to nizej
-builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

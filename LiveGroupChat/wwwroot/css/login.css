@@ -1,11 +1,9 @@
-﻿/* Ogólny reset stylów */
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Tło aplikacji */
 body {
     background-color: #1c1c1c;
     font-family: 'Arial', sans-serif;
@@ -15,7 +13,6 @@ body {
     height: 100vh;
 }
 
-/* Kontener formularza */
 .login-container {
     display: flex;
     justify-content: center;
@@ -24,7 +21,6 @@ body {
     background: linear-gradient(135deg, #2a2a2a, #333333);
 }
 
-/* Formularz logowania */
 .login-box {
     background-color: #222222;
     padding: 30px;
@@ -34,7 +30,6 @@ body {
     text-align: center;
 }
 
-/* Nagłówek */
 h2 {
     color: #00ff99;
     font-size: 24px;
@@ -78,19 +73,4 @@ input {
 
 .login-btn:hover {
     background-color: #33cc66;
-}
-
-.register-text {
-    color: #ccc;
-    font-size: 14px;
-    margin-top: 20px;
-}
-
-.register-text a {
-    color: #00ff99;
-    text-decoration: none;
-}
-
-.register-text a:hover {
-    text-decoration: underline;
 }

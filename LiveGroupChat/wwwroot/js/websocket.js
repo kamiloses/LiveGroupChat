@@ -61,12 +61,12 @@ function connectToWebSocket() {
     document.querySelector(".send-btn").addEventListener("click", function (e) {
         e.preventDefault();
         const textInput = document.querySelector('input[name="Text"]');
-        const text = textInput.value.trim();
+        const message = "ABCDEF"//textInput.value.trim();
         const username = "Janek"; // Możesz później zmienić na dynamiczne pobieranie
 
-        if (text === "") return;
+        if (message === "") return;
 
-        connection.invoke("SendMessage", username, text)
+        connection.invoke("SendMessage", message)
             .then(() => {
                 console.log("Wysłano wiadomość");
                 textInput.value = "";
