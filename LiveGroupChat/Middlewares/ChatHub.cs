@@ -21,31 +21,52 @@ public class ChatHub : Hub {
 
     // Metoda wywoływana przez klienta w celu wysłania wiadomości
     public async Task SendMessage(string message)
-  //  public async Task SendMessage(string message,string username)
-    {    
-        Console.BackgroundColor = ConsoleColor.Green;
+    {
         var httpContext = Context.GetHttpContext();
         var userIdString = httpContext.Session.GetString("UserId");
-        
-             User user=  await _context.Users.FirstOrDefaultAsync(user => user.Id.Equals(int.Parse(userIdString)));
-        
-     
-        
-       MessageViewModel messageView = new MessageViewModel(){Text = message,User =user };
-         messageView.User.Nickname=user.Nickname;   
-        _homeService.SendMessage(messageView);
-        
-        
-        // Wysyłanie wiadomości do wszystkich połączonych klientów
-        await Clients.All.SendAsync("ReceiveMessage",user.Nickname, message);
+
+        if (string.IsNullOrEmpty(userIdString)) return;
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == int.Parse(userIdString));
+        if (user == null) return;
+
+        var messageEntity = new Message
+        {
+            Text = message,
+            UserId = user.Id,
+        };
+
+        _context.Messages.Add(messageEntity);
+        await _context.SaveChangesAsync();
+
+        await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id);
     }
+
     public async Task GiveEmoji(int messageId, string emoji)
     {
-        Console.WriteLine($"ODEBRAŁEM emoji: {emoji} dla wiadomości ID: {messageId}");
-        _homeService.AddEmoji(messageId, emoji);
-        await Clients.All.SendAsync("ReceiveEmoji", messageId, emoji);
+        var httpContext = Context.GetHttpContext();
+        var userIdString = httpContext.Session.GetString("UserId");
 
+        if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            return;
+
+        var existingReaction = await _context.Reactions
+            .FirstOrDefaultAsync(r => r.MessageId == messageId && r.UserId == userId && r.Emoji == emoji);
+
+        if (existingReaction == null)
+        {
+            var reaction = new Reaction
+            {
+                MessageId = messageId,
+                UserId = userId,
+                Emoji = emoji,
+            };
+            _context.Reactions.Add(reaction);
+            await _context.SaveChangesAsync();
+        }
+
+        await Clients.All.SendAsync("ReceiveEmoji", messageId, emoji);
     }
-    
+
     
 }

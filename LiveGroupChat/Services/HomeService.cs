@@ -21,9 +21,9 @@ public class HomeService
 
         if (!_context.Users.Any(user => user.Id == userId))
         {
-            User user = new User() { Id = userId,Nickname = "HomeService"};
+            User user = new User() { Id = userId, Nickname = "HomeService" };
             Console.BackgroundColor = ConsoleColor.Green;
-            Console.WriteLine("WYKONUJE");
+            Console.WriteLine("EXECUTING");
             _context.Users.Add(user);
             _context.SaveChanges();
         }
@@ -34,19 +34,17 @@ public class HomeService
             _context.SaveChanges();
         }
 
-       List<Message> a= _context.Messages.Include(user=>user.User).ToList();
-          Console.Write(a);
+        List<Message> messages = _context.Messages.Include(user => user.User).ToList();
+        Console.Write(messages);
 
-        return _context.Messages.Include(user=>user.User).ToList();
+        return messages;
     }
 
     public void SendMessage(MessageViewModel message)
     {
         int userId = message.User.Id;
         var user = _context.Users.First(u => u.Id == userId);
-        Random random = new Random();
-                
-        // Tworzenie wiadomości
+
         var messageEntity = new Message
         {
             Text = message.Text!,
@@ -63,14 +61,12 @@ public class HomeService
     {
         int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
 
-        // 1. Tworzenie użytkowników na potrzeby testów
         User user1 = new User() { Id = userId };
         User user2 = new User() { Id = userId };
         List<User> users = new List<User>() { user1, user2 };
         Random random = new Random();
         User randomUser = users[random.Next(users.Count)];
 
-        // 2. Tworzenie obiektu reakcji
         int reactionId = new Random().Next();
         Reaction reaction = new Reaction()
         {
@@ -80,21 +76,22 @@ public class HomeService
             UserId = randomUser.Id,
             user = randomUser
         };
-        
-        //3 znajduje obiekt wiadomosci z bazy danych któremu dałem reakcje
-        Console.BackgroundColor= ConsoleColor.Green;
-        Console.WriteLine(messageId + " UserId "+randomUser.Id);
-        Message message = _context.Messages.Single(message =>message.Id == messageId);//message.UserId == randomUser.Id &&
 
-        //4 czy ta oceniłem wczesniej wiadomosc reakcją
-        bool wasEvaluated= message.Reactions.Any(reaction => reaction.UserId == userId);
-        if (!wasEvaluated) {
-            message.Reactions.Add(reaction); }
-        else {
-            //todo transactional
-            var reactionToRemove = message.Reactions.Single(reaction => reaction.UserId == userId);
+        Console.BackgroundColor = ConsoleColor.Green;
+        Console.WriteLine(messageId + " UserId " + randomUser.Id);
+
+        Message message = _context.Messages.Single(message => message.Id == messageId);
+
+        bool wasEvaluated = message.Reactions.Any(r => r.UserId == userId);
+        if (!wasEvaluated)
+        {
+            message.Reactions.Add(reaction);
+        }
+        else
+        {
+            var reactionToRemove = message.Reactions.Single(r => r.UserId == userId);
             message.Reactions.Remove(reactionToRemove);
             message.Reactions.Add(reaction);
         }
-        }
+    }
 }

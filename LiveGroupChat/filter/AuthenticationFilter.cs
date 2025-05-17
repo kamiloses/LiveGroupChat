@@ -13,7 +13,7 @@ public void OnAuthorization(AuthorizationFilterContext context)
     {
         context.Result = new JsonResult(new
         {
-            error = "Musisz być zalogowany."
+            error = "."
         })
         {
             StatusCode = StatusCodes.Status401Unauthorized

@@ -1,9 +1,8 @@
-﻿/* Podstawowy styl strony */
-body {
+﻿body {
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #121212; /* Ciemne tło */
+    background-color: #121212;
     color: white;
     display: flex;
     justify-content: center;
@@ -11,7 +10,6 @@ body {
     height: 100vh;
 }
 
-/* Styl kontenera czatu */
 .chat-container {
     width: 90%;
     height: 90%;
@@ -20,20 +18,18 @@ body {
     align-items: center;
 }
 
-/* Czat - kwadratowe okno */
 .chat-box {
     width: 80%;
     height: 80%;
     border-radius: 20px;
-    background-color: #333; /* Ciemny szary kolor czatu */
+    background-color: #333;
     display: flex;
     flex-direction: column;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
-/* Nagłówek czatu */
 .chat-header {
-    background-color: #4CAF50; /* Kolor gamingowy - zielony */
+    background-color: #4CAF50;
     padding: 20px;
     text-align: center;
     border-top-left-radius: 20px;
@@ -45,14 +41,12 @@ body {
     color: white;
 }
 
-/* Okno czatu (gdzie pojawiają się wiadomości) */
 .chat-window {
     flex-grow: 1;
     padding: 10px;
-    overflow-y: auto; /* Aby wiadomości przewijały się, jeśli ich jest za dużo */
+    overflow-y: auto;
 }
 
-/* Pojedyncza wiadomość */
 .message-container {
     display: flex;
     flex-direction: column;
@@ -63,25 +57,23 @@ body {
     padding: 10px;
     border-radius: 10px;
     max-width: 70%;
-    align-self: flex-start; /* Domyślnie wiadomości wyrównane do lewej */
+    align-self: flex-start;
 }
 
-/* Wiadomość po prawej stronie */
 .message.right {
-    background-color: #4CAF50; /* Zielony dla wiadomości "Nowak" */
-    align-self: flex-end; /* Wiadomości wyrównane do prawej */
+    background-color: #4CAF50;
+    align-self: flex-end;
 }
 
 .message.left {
     background-color: #444;
-    align-self: flex-start; /* Wiadomości wyrównane do prawej */
+    align-self: flex-start;
 }
 
-/* Stopka czatu (pole tekstowe i przycisk wysyłania) */
 .chat-footer {
     display: flex;
     padding: 10px;
-    background-color: #222; /* Ciemniejszy szary */
+    background-color: #222;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
@@ -98,7 +90,7 @@ body {
 
 .send-btn {
     padding: 10px 20px;
-    background-color: #4CAF50; /* Zielony kolor przycisku */
+    background-color: #4CAF50;
     border: none;
     border-radius: 10px;
     color: white;
@@ -112,14 +104,13 @@ body {
 .message-content {
     position: relative;
     padding-right: 25px;
-    word-wrap: break-word; /* Automatyczne łamanie długich słów */
-    overflow-wrap: break-word; /* Obsługuje inne przypadki łamania długich słów */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
     max-width: 400px;
 }
 
-/* Pozycjonowanie dla przycisku reakcji i popupu */
 .reaction-button-wrapper {
-    position: absolute; /* Ustalamy pozycjonowanie absolutne w obrębie message-content */
+    position: absolute;
     bottom: 2px;
     right: 2px;
     display: flex;
@@ -141,8 +132,8 @@ body {
 
 .reaction-popup {
     display: none;
-    position: absolute; /* Ustawiamy popup w obrębie message-content */
-    bottom: 120%; /* Popup pojawi się nad wiadomością */
+    position: absolute;
+    bottom: 120%;
     right: 0;
     background-color: #222;
     border: 1px solid #555;

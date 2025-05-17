@@ -3,7 +3,7 @@
     public class UserIdMiddleware
     {
         private readonly RequestDelegate _next;
-        private static readonly Random _random = new Random(); // statyczny, aby uniknąć problemu z seedem
+        private static readonly Random _random = new Random();
 
         public UserIdMiddleware(RequestDelegate next)
         {
@@ -12,17 +12,14 @@
 
         public async Task InvokeAsync(HttpContext context)
         {
-          
             var userIdString = context.Session.GetString("UserId");
 
             if (string.IsNullOrEmpty(userIdString))
             {
-                // Generujemy losowe ID i zapisujemy w sesji
-                int userId = _random.Next(1, 1001); // zakres 1–1000 włącznie
+                int userId = _random.Next(1, 1001);
                 context.Session.SetString("UserId", userId.ToString());
             }
 
-            // Przekazujemy kontrolę do następnego middleware
             await _next(context);
         }
     }

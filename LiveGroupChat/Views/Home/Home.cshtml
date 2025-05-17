@@ -1,15 +1,17 @@
 ﻿@model List<LiveGroupChat.Models.ViewModels.MessageViewModel>
 
 @{
-ViewData["Title"] = "Home - Czat";
+    ViewData["Title"] = "Home - Chat";
 }
 
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/home.css">
+    <script src="/js/signalr.min.js"></script>
+    <script src="/js/chat.js" defer></script>
     <style>
         .message-content {
             position: relative;
@@ -56,79 +58,56 @@ ViewData["Title"] = "Home - Czat";
 <div class="chat-container">
     <div class="chat-box">
         <div class="chat-header">
-            <h2>Witaj w czacie!</h2>
+            <h2>Welcome to the chat!</h2>
         </div>
         <div class="chat-window">
             <div class="message-container">
                 @foreach (var message in Model)
                 {
-                    <div class="message left">
-                    <div style="font-size: 0.9em; color: #ccc;">
-                        @if (message.User != null)
-                        {
-                        <strong>@message.User.Nickname</strong>
-                        }
-                        else
-                        {
-                        <strong>Nieznany użytkownik</strong>
-                        }
-                    </div>
-
-                    <div class="message-content">
-                        @message.Text
-
-                        <div class="reaction-button-wrapper">
-                            <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
-                            <div class="reaction-popup">
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="❤️">❤️</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😂">😂</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👍">👍</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😮">😮</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👎">👎</button>
-                            </div>
-                        </div>
-
-                        <div class="reactions">
-                            @foreach (var reaction in message.Reactions)
+                    <div class="message left" data-message-id="@message.Id">
+                        <div style="font-size: 0.9em; color: #ccc;">
+                            @if (message.User != null)
                             {
-                            <span style="font-size: 1.3em;">@reaction.Emoji</span>
+                                <strong>@message.User.Nickname</strong>
+                            }
+                            else
+                            {
+                                <strong>Unknown user</strong>
                             }
                         </div>
+
+                        <div class="message-content">
+                            @message.Text
+
+                            <div class="reaction-button-wrapper">
+                                <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
+                                <div class="reaction-popup">
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="❤️">❤️</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😂">😂</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👍">👍</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😮">😮</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👎">👎</button>
+                                </div>
+                            </div>
+
+                            <div class="reactions">
+                                @foreach (var reaction in message.Reactions)
+                                {
+                                    <span style="font-size: 1.3em;">@reaction.Emoji</span>
+                                }
+                            </div>
+                        </div>
                     </div>
-                </div>
                 }
             </div>
         </div>
         <div class="chat-footer">
             <form asp-action="WriteMessage" method="post" style="display:flex; width: 100%;">
-                <input type="text" name="Text" placeholder="Napisz wiadomość..." class="chat-input" />
-                <button type="submit" class="send-btn">Wyślij</button>
+                <input type="text" name="Text" placeholder="Write a message..." class="chat-input" />
+                <button type="submit" class="send-btn">Send</button>
             </form>
         </div>
     </div>
 </div>
-
-<script src="/js/signalr.min.js"></script>
-<script src="/js/websocket.js"></script>
-
-<script>
-    window.onload = function () {
-        connectToWebSocket();
-    };
-
-    function toggleReactions(el) {
-        const popup = el.nextElementSibling;
-        document.querySelectorAll('.reaction-popup').forEach(p => {
-            if (p !== popup) p.style.display = 'none';
-        });
-        popup.style.display = popup.style.display === "block" ? "none" : "block";
-    }
-
-    document.addEventListener('click', function (e) {
-        if (!e.target.closest('.reaction-button-wrapper')) {
-            document.querySelectorAll('.reaction-popup').forEach(p => p.style.display = 'none');
-        }
-    });
-</script>
 </body>
 </html>
