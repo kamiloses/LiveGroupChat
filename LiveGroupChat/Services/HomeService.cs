@@ -23,12 +23,11 @@ public class HomeService
         {
             User user = new User() { Id = userId, Nickname = "HomeService" };
             Console.BackgroundColor = ConsoleColor.Green;
-            Console.WriteLine("EXECUTING");
             _context.Users.Add(user);
             _context.SaveChanges();
         }
 
-        if (_context.Messages.Count() > 6)
+        if (_context.Messages.Count() >= 6)
         {
             _context.Messages.RemoveRange(_context.Messages);
             _context.SaveChanges();
