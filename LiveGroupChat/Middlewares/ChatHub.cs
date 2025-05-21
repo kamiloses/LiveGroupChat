@@ -9,17 +9,13 @@ using Microsoft.AspNetCore.SignalR;
 
 public class ChatHub : Hub {
     
-    private readonly HomeService _homeService;
     private readonly AppDbContext _context;
 
-    public ChatHub(HomeService homeService, AppDbContext context)
+    public ChatHub(AppDbContext context)
     {
-        _homeService = homeService;
         _context = context;
     }
 
-
-    // Metoda wywoływana przez klienta w celu wysłania wiadomości
     public async Task SendMessage(string message)
     {
         var httpContext = Context.GetHttpContext();
@@ -52,13 +48,11 @@ public class ChatHub : Hub {
         if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
             return;
 
-        // Sprawdź czy użytkownik już zareagował NA TĘ WIADOMOŚĆ (nieważne jaką emoji)
         var existingReaction = await _context.Reactions
             .FirstOrDefaultAsync(r => r.MessageId == messageId && r.UserId == userId);
 
         if (existingReaction != null)
         {
-            // Użytkownik już zareagował — ignorujemy
             return;
         }
 

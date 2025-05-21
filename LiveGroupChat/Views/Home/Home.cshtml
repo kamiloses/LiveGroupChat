@@ -57,7 +57,7 @@ ViewData["Title"] = "Home - Czat";
 <div class="chat-container">
     <div class="chat-box">
         <div class="chat-header">
-            <h2>Witaj w czacie!</h2>
+            <h2>Welcome to the chat!</h2>
         </div>
         <div class="chat-window">
             <div class="message-container">
@@ -71,7 +71,7 @@ ViewData["Title"] = "Home - Czat";
                         }
                         else
                         {
-                        <strong>Nieznany użytkownik</strong>
+                        <strong>Unknown user</strong>
                         }
                     </div>
 
@@ -102,8 +102,8 @@ ViewData["Title"] = "Home - Czat";
         </div>
         <div class="chat-footer">
             <form id="messageForm" asp-action="WriteMessage" method="post" style="display:flex; width: 100%;">
-                <input type="text" name="Text" placeholder="Napisz wiadomość..." class="chat-input" autocomplete="off" />
-                <button type="submit" class="send-btn">Wyślij</button>
+                <input type="text" name="Text" placeholder="Send Message..." class="chat-input" autocomplete="off" />
+                <button type="submit" class="send-btn">Send</button>
             </form>
         </div>
     </div>

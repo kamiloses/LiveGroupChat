@@ -1,8 +1,6 @@
 using LiveGroupChat.Middlewares;
 using LiveGroupChat.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
