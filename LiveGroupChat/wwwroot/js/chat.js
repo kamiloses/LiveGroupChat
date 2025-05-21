@@ -25,14 +25,15 @@ function connectToWebSocket() {
         .withUrl("/chatHub")
         .build();
 
-    connection.on("ReceiveMessage", (username, message) => {
+    connection.on("ReceiveMessage", (username, message, messageId) => {
         const messageContainer = document.querySelector(".message-container");
 
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message", username === "Nowak" ? "left" : "right");
+        messageDiv.setAttribute("data-message-id", messageId);
 
-        messageDiv.innerHTML =
-            `<div style="font-size: 0.9em; color: #ccc;">
+        messageDiv.innerHTML = `
+            <div style="font-size: 0.9em; color: #ccc;">
                 <strong>${escapeHtml(username)}</strong>
                 <span style="float: right;">${new Date().toLocaleString('en-US')}</span>
             </div>
@@ -41,15 +42,14 @@ function connectToWebSocket() {
                 <div class="reaction-button-wrapper">
                     <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
                     <div class="reaction-popup">
-                        ${['❤️', '😂', '👍', '😮', '👎'].map(emoji =>
-                `<button type="button"
+                        ${['❤️', '😂', '👍', '😮', '👎'].map(emoji => `
+                            <button type="button"
                                 class="emoji-button"
-                                data-message-id="0"
+                                data-message-id="${messageId}"
                                 data-emoji="${emoji}"
                                 style="background:none; border:none; font-size:1.3em; cursor:pointer;">
                                 ${emoji}
-                            </button>`
-            ).join('')}
+                            </button>`).join('')}
                     </div>
                 </div>
                 <div class="reactions"></div>
@@ -72,8 +72,7 @@ function connectToWebSocket() {
     document.querySelector(".send-btn").addEventListener("click", function (e) {
         e.preventDefault();
         const textInput = document.querySelector('input[name="Text"]');
-        const message = "ABCDEF";
-        const username = "Janek";
+        const message = textInput.value.trim();
 
         if (message === "") return;
 
@@ -113,8 +112,11 @@ function updateReactions(messageId, emoji) {
     const messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
     if (messageDiv) {
         const reactionsDiv = messageDiv.querySelector(".reactions");
+        if (!reactionsDiv) return;
         const emojiSpan = document.createElement("span");
         emojiSpan.textContent = emoji;
+        emojiSpan.style.fontSize = "1.3em";
+        emojiSpan.style.marginRight = "5px";
         reactionsDiv.appendChild(emojiSpan);
     }
 }
