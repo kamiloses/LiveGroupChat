@@ -40,6 +40,8 @@ public class ChatHub : Hub {
         await _context.SaveChangesAsync();
 
         await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id);
+        
+        
     }
 
     public async Task GiveEmoji(int messageId, string emoji)
@@ -50,20 +52,25 @@ public class ChatHub : Hub {
         if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
             return;
 
+        // Sprawdź czy użytkownik już zareagował NA TĘ WIADOMOŚĆ (nieważne jaką emoji)
         var existingReaction = await _context.Reactions
-            .FirstOrDefaultAsync(r => r.MessageId == messageId && r.UserId == userId && r.Emoji == emoji);
+            .FirstOrDefaultAsync(r => r.MessageId == messageId && r.UserId == userId);
 
-        if (existingReaction == null)
+        if (existingReaction != null)
         {
-            var reaction = new Reaction
-            {
-                MessageId = messageId,
-                UserId = userId,
-                Emoji = emoji,
-            };
-            _context.Reactions.Add(reaction);
-            await _context.SaveChangesAsync();
+            // Użytkownik już zareagował — ignorujemy
+            return;
         }
+
+        var reaction = new Reaction
+        {
+            MessageId = messageId,
+            UserId = userId,
+            Emoji = emoji,
+        };
+
+        _context.Reactions.Add(reaction);
+        await _context.SaveChangesAsync();
 
         await Clients.All.SendAsync("ReceiveEmoji", messageId, emoji);
     }
