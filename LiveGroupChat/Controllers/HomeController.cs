@@ -30,7 +30,7 @@ namespace LiveGroupChat.Controllers
             {
                 Id = message.Id,
                 User = message.User,
-                Created = DateTime.Now, // Można rozważyć pole Created w bazie
+                Created = DateTime.Now, 
                 Text = message.Text,
                 Reactions = message.Reactions?.ToList() ?? new List<Reaction>()
             }).ToList();

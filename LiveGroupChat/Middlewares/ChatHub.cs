@@ -24,7 +24,7 @@ public class ChatHub : Hub {
         if (string.IsNullOrEmpty(userIdString)) return;
 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == int.Parse(userIdString));
-        if (user == null) return;
+    
 
         var messageEntity = new Message
         {
@@ -43,23 +43,13 @@ public class ChatHub : Hub {
     public async Task GiveEmoji(int messageId, string emoji)
     {
         var httpContext = Context.GetHttpContext();
-        var userIdString = httpContext.Session.GetString("UserId");
-
-        if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
-            return;
-
-        var existingReaction = await _context.Reactions
-            .FirstOrDefaultAsync(r => r.MessageId == messageId && r.UserId == userId);
-
-        if (existingReaction != null)
-        {
-            return;
-        }
+        var userId = httpContext.Session.GetString("UserId");
+        
 
         var reaction = new Reaction
         {
             MessageId = messageId,
-            UserId = userId,
+            UserId = int.Parse(userId),
             Emoji = emoji,
         };
 

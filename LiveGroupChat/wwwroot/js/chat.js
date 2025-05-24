@@ -1,122 +1,73 @@
-﻿window.onload = function () {
-    connectToWebSocket();
-};
+﻿const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/chatHub")
+    .build();
 
-function toggleReactions(el) {
-    const popup = el.nextElementSibling;
-    document.querySelectorAll('.reaction-popup').forEach(p => {
-        if (p !== popup) p.style.display = 'none';
+connection.on("ReceiveMessage", (user, message) => {
+    const msgContainer = document.querySelector(".message-container");
+
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", "left");
+
+    const userNameDiv = document.createElement("div");
+    userNameDiv.style.fontSize = "0.9em";
+    userNameDiv.style.color = "#ccc";
+    userNameDiv.innerHTML = `<strong>${user}</strong>`;
+
+    const messageContent = document.createElement("div");
+    messageContent.classList.add("message-content");
+    messageContent.textContent = message;
+
+    const reactionWrapper = document.createElement("div");
+    reactionWrapper.classList.add("reaction-button-wrapper");
+
+    const reactionButton = document.createElement("span");
+    reactionButton.classList.add("reaction-button");
+    reactionButton.textContent = "➕";
+    reactionButton.onclick = function () {
+        toggleReactions(reactionButton);
+    };
+
+    const reactionPopup = document.createElement("div");
+    reactionPopup.classList.add("reaction-popup");
+
+    const emojis = ["❤️", "😂", "👍", "😮", "👎"];
+
+    emojis.forEach(e => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.classList.add("emoji-button");
+        btn.textContent = e;
+        btn.onclick = () => {
+            reactionPopup.style.display = "none";
+        };
+        reactionPopup.appendChild(btn);
     });
-    popup.style.display = popup.style.display === "block" ? "none" : "block";
-}
 
-document.addEventListener('click', function (e) {
-    if (!e.target.closest('.reaction-button-wrapper')) {
-        document.querySelectorAll('.reaction-popup').forEach(p => p.style.display = 'none');
-    }
+    reactionWrapper.appendChild(reactionButton);
+    reactionWrapper.appendChild(reactionPopup);
+
+    messageContent.appendChild(reactionWrapper);
+
+    const reactionsDiv = document.createElement("div");
+    reactionsDiv.classList.add("reactions");
+
+    messageContent.appendChild(reactionsDiv);
+
+    messageDiv.appendChild(userNameDiv);
+    messageDiv.appendChild(messageContent);
+
+    msgContainer.appendChild(messageDiv);
+    msgContainer.scrollTop = msgContainer.scrollHeight;
 });
 
-let connection;
+connection.start().catch(err => console.error(err.toString()));
 
-function connectToWebSocket() {
-    console.log("Trying to connect to SignalR...");
-
-    connection = new signalR.HubConnectionBuilder()
-        .withUrl("/chatHub")
-        .build();
-
-    connection.on("ReceiveMessage", (username, message, messageId) => {
-        const messageContainer = document.querySelector(".message-container");
-
-        const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message", username === "Nowak" ? "left" : "right");
-        messageDiv.setAttribute("data-message-id", messageId);
-
-        messageDiv.innerHTML = `
-            <div style="font-size: 0.9em; color: #ccc;">
-                <strong>${escapeHtml(username)}</strong>
-                <span style="float: right;">${new Date().toLocaleString('en-US')}</span>
-            </div>
-            <div class="message-content">
-                ${escapeHtml(message)}
-                <div class="reaction-button-wrapper">
-                    <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
-                    <div class="reaction-popup">
-                        ${['❤️', '😂', '👍', '😮', '👎'].map(emoji => `
-                            <button type="button"
-                                class="emoji-button"
-                                data-message-id="${messageId}"
-                                data-emoji="${emoji}"
-                                style="background:none; border:none; font-size:1.3em; cursor:pointer;">
-                                ${emoji}
-                            </button>`).join('')}
-                    </div>
-                </div>
-                <div class="reactions"></div>
-            </div>`;
-
-        messageContainer.appendChild(messageDiv);
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-    });
-
-    connection.on("ReceiveEmoji", (messageId, emoji) => {
-        updateReactions(messageId, emoji);
-    });
-
-    connection.start()
-        .then(() => {
-            console.log("Connected to SignalR server");
-        })
-        .catch(err => console.error("SignalR connection error: ", err));
-
-    document.querySelector(".send-btn").addEventListener("click", function (e) {
-        e.preventDefault();
-        const textInput = document.querySelector('input[name="Text"]');
-        const message = textInput.value.trim();
-
-        if (message === "") return;
-
-        connection.invoke("SendMessage", message)
-            .then(() => {
-                textInput.value = "";
-            })
-            .catch(err => {
-                console.error("Error sending message: ", err);
-            });
-    });
-
-    document.addEventListener("click", function (e) {
-        if (e.target.classList.contains("emoji-button")) {
-            e.preventDefault();
-
-            const messageId = parseInt(e.target.dataset.messageId);
-            const emoji = e.target.dataset.emoji;
-
-            connection.invoke("GiveEmoji", messageId, emoji)
-                .then(() => console.log("Emoji sent:", emoji, "for ID:", messageId))
-                .catch(err => console.error("Error sending emoji via SignalR:", err));
-        }
-    });
-}
-
-function escapeHtml(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function updateReactions(messageId, emoji) {
-    const messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
-    if (messageDiv) {
-        const reactionsDiv = messageDiv.querySelector(".reactions");
-        if (!reactionsDiv) return;
-        const emojiSpan = document.createElement("span");
-        emojiSpan.textContent = emoji;
-        emojiSpan.style.fontSize = "1.3em";
-        emojiSpan.style.marginRight = "5px";
-        reactionsDiv.appendChild(emojiSpan);
+function toggleReactions(button) {
+    const popup = button.nextElementSibling;
+    if (popup.style.display === "block") {
+        popup.style.display = "none";
+    } else {
+        popup.style.display = "block";
     }
 }
+
