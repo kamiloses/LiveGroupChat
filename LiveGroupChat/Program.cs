@@ -2,31 +2,40 @@ using LiveGroupChat.Middlewares;
 using LiveGroupChat.Services;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSession(options =>
-{
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-builder.Services.AddTransient<HomeService>();
-builder.Services.AddRazorPages();
-builder.Services.AddControllers();
-builder.Services.AddSignalR();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    public class Program //integration tests
+    {
+        public static async Task Main(string[] args)
+        {
 
-var app = builder.Build();
+            var builder = WebApplication.CreateBuilder(args);
 
-app.UseSession();
-app.UseStaticFiles();
-app.UseRouting();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            builder.Services.AddTransient<HomeService>();
+            builder.Services.AddRazorPages();
+            builder.Services.AddControllers();
+            builder.Services.AddSignalR();
 
-app.MapRazorPages();
-app.MapControllers();
-app.MapHub<ChatHub>("/chatHub");
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-app.Run();
+            var app = builder.Build();
+
+            app.UseSession();
+            app.UseStaticFiles();
+            app.UseRouting();
+
+            app.MapRazorPages();
+            app.MapControllers();
+            app.MapHub<ChatHub>("/chatHub");
+
+            app.Run();
+        }
+    }
