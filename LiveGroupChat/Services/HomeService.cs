@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LiveGroupChat.Services
-{
+namespace LiveGroupChat.Services;
     public class HomeService
     {
         private readonly MessageRepository _messageRepository;
@@ -36,20 +35,5 @@ namespace LiveGroupChat.Services
 
             return _messageRepository.GetAllWithRelations();
         }
-
-        public Message AddMessage(string text)
-        {
-            int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
-            var user = _userRepository.GetById(userId);
-            if (user == null) throw new Exception("User not found");
-
-            var message = new Message
-            {
-                Text = text,
-                UserId = user.Id
-            };
-
-            return _messageRepository.Add(message);
-        }
+        
     }
-}
