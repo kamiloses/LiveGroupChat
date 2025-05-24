@@ -1,29 +1,24 @@
 ﻿using LiveGroupChat.Controllers;
-using LiveGroupChat.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
-public class AccountControllerSimpleTests
+namespace LiveGroupChat.Tests.Controllers;
+public class AccountControllerTests
 {
     [Fact]
     public void Login_Get_ReturnsView()
     {
-        // Arrange
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase("LoginGetDb")
-            .Options;
+            .UseInMemoryDatabase("AccDb1").Options;
 
-        using var context = new AppDbContext(options);
-        var mockAccessor = new Mock<IHttpContextAccessor>();
-        var controller = new AccountController(context, mockAccessor.Object);
+        using var ctx = new AppDbContext(options);
+        var ctrl = new AccountController(ctx, new Mock<IHttpContextAccessor>().Object);
 
-        // Act
-        var result = controller.Login();
+        var result = ctrl.Login();
 
-        // Assert
         Assert.IsType<ViewResult>(result);
     }
 
@@ -31,23 +26,19 @@ public class AccountControllerSimpleTests
     public void Login_Post_AddsUser_AndRedirects()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase("LoginPostDb")
-            .Options;
+            .UseInMemoryDatabase("AccDb2").Options;
 
-        using var context = new AppDbContext(options);
+        using var ctx = new AppDbContext(options);
+        var session = new Mock<ISession>();
+        var httpCtx = new Mock<HttpContext>();
+        httpCtx.Setup(c => c.Session).Returns(session.Object);
+        var accessor = new Mock<IHttpContextAccessor>();
+        accessor.Setup(a => a.HttpContext).Returns(httpCtx.Object);
 
-        var mockSession = new Mock<ISession>();
-        var mockHttpContext = new Mock<HttpContext>();
-        mockHttpContext.Setup(c => c.Session).Returns(mockSession.Object);
-
-        var mockAccessor = new Mock<IHttpContextAccessor>();
-        mockAccessor.Setup(a => a.HttpContext).Returns(mockHttpContext.Object);
-
-        var controller = new AccountController(context, mockAccessor.Object);
-
-        var result = controller.Login("Tester");
+        var ctrl = new AccountController(ctx, accessor.Object);
+        var result = ctrl.Login("Tester");
 
         Assert.IsType<RedirectToActionResult>(result);
-        Assert.Single(context.Users); 
+        Assert.Single(ctx.Users);
     }
 }

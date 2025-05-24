@@ -1,4 +1,5 @@
 using LiveGroupChat.Middlewares;
+using LiveGroupChat.Repositories;
 using LiveGroupChat.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
             var builder = WebApplication.CreateBuilder(args);
 
+            
+            builder.Services.AddScoped<UserRepository>();
+            builder.Services.AddScoped<MessageRepository>();
+            builder.Services.AddScoped<HomeService>();
+            
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSession(options =>

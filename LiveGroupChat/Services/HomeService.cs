@@ -1,42 +1,55 @@
-﻿﻿using LiveGroupChat.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using LiveGroupChat.Models.Entities;
+using LiveGroupChat.Repositories;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace LiveGroupChat.Services;
-
-public class HomeService
+namespace LiveGroupChat.Services
 {
-    private readonly AppDbContext _context;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public HomeService(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+    public class HomeService
     {
-        _context = context;
-        _httpContextAccessor = httpContextAccessor;
-    }
+        private readonly MessageRepository _messageRepository;
+        private readonly UserRepository _userRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public List<Message> GetAllMessages()
-    {
-        int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
-        if (!_context.Users.Any(user => user.Id == userId))
+        public HomeService(MessageRepository messageRepository, UserRepository userRepository, IHttpContextAccessor httpContextAccessor)
         {
-            User user = new User() { Id = userId, Nickname = "HomeService" };
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            _messageRepository = messageRepository;
+            _userRepository = userRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        if (_context.Messages.Count() >= 6)
+        public List<Message> GetAllMessages()
         {
-            _context.Messages.RemoveRange(_context.Messages);
-            _context.SaveChanges();
+            int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+
+            if (_userRepository.GetById(userId) == null)
+            {
+                var user = new User() { Id = userId, Nickname = "HomeService" };
+                _userRepository.Add(user);
+            }
+
+            if (_messageRepository.Count() >= 6)
+            {
+                _messageRepository.RemoveAll();
+            }
+
+            return _messageRepository.GetAllWithRelations();
         }
 
-        List<Message> messages = _context.Messages.Include(user => user.User)
-            .Include(m => m.Reactions).ToList();
-        Console.Write(messages);
+        public Message AddMessage(string text)
+        {
+            int userId = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+            var user = _userRepository.GetById(userId);
+            if (user == null) throw new Exception("User not found");
 
-        return messages;
+            var message = new Message
+            {
+                Text = text,
+                UserId = user.Id
+            };
+
+            return _messageRepository.Add(message);
+        }
     }
-
-  
-    
 }
