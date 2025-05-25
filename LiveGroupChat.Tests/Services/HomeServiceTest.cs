@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Text;
 using System.Linq;
-using System.Text;
 using LiveGroupChat.Models.Entities;
 using LiveGroupChat.Repositories;
 using LiveGroupChat.Services;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace LiveGroupChat.Tests.Services
 {
@@ -16,12 +16,10 @@ namespace LiveGroupChat.Tests.Services
         private ISession MockSession(string userId)
         {
             var session = new Mock<ISession>();
-            session.Setup(s => s.TryGetValue("UserId", out It.Ref<byte[]>.IsAny))
-                .Returns((string key, out byte[] val) =>
-                {
-                    val = Encoding.UTF8.GetBytes(userId);
-                    return true;
-                });
+            byte[] userIdBytes = Encoding.UTF8.GetBytes(userId);
+
+            session.Setup(s => s.TryGetValue("UserId", out userIdBytes)).Returns(true);
+
             return session.Object;
         }
 
@@ -35,60 +33,62 @@ namespace LiveGroupChat.Tests.Services
         }
 
         [Fact]
-        public void GetAllMessages_CreatesUser_IfNotExists()
+        public async Task GetAllMessages_CreatesUser_IfNotExists()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase("TestDb1").Options;
 
-            using var ctx = new AppDbContext(options);
+            await using var ctx = new AppDbContext(options);
             var messageRepo = new MessageRepository(ctx);
             var userRepo = new UserRepository(ctx);
 
             var service = new HomeService(messageRepo, userRepo, MockHttpContextAccessor("10"));
 
-            service.GetAllMessages();
+            var messages = await service.GetAllMessagesAsync();
 
             Assert.True(ctx.Users.Any(u => u.Id == 10));
         }
 
         [Fact]
-        public void GetAllMessages_RemovesMessages_When6OrMore()
+        public async Task GetAllMessages_RemovesMessages_When6OrMore()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase("TestDb2").Options;
 
-            using var ctx = new AppDbContext(options);
-            ctx.Users.Add(new User { Id = 1 });
+            await using var ctx = new AppDbContext(options);
+            ctx.Users.Add(new User { Id = 1, Nickname = "TestUser" });  
             for (int i = 0; i < 6; i++)
                 ctx.Messages.Add(new Message { UserId = 1, Text = $"Msg{i}" });
-            ctx.SaveChanges();
+            await ctx.SaveChangesAsync();
 
             var messageRepo = new MessageRepository(ctx);
             var userRepo = new UserRepository(ctx);
             var service = new HomeService(messageRepo, userRepo, MockHttpContextAccessor("1"));
 
-            service.GetAllMessages();
+            await service.GetAllMessagesAsync();
+
+            ctx.ChangeTracker.Clear();
 
             Assert.Empty(ctx.Messages);
         }
 
         [Fact]
-        public void GetAllMessages_ReturnsAllMessages()
+        public async Task GetAllMessages_ReturnsAllMessages()
         {
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseInMemoryDatabase("TestDb3").Options;
 
-            using var ctx = new AppDbContext(options);
+            await using var ctx = new AppDbContext(options);
             var user = new User { Id = 2, Nickname = "User2" };
             ctx.Users.Add(user);
             ctx.Messages.Add(new Message { Text = "Hello", UserId = 2 });
-            ctx.SaveChanges();
+            await ctx.SaveChangesAsync();
 
             var messageRepo = new MessageRepository(ctx);
             var userRepo = new UserRepository(ctx);
             var service = new HomeService(messageRepo, userRepo, MockHttpContextAccessor("2"));
 
-            var messages = service.GetAllMessagesAsync();
+            var messages = await service.GetAllMessagesAsync();
 
             Assert.Single(messages);
             Assert.Equal("Hello", messages[0].Text);

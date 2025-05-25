@@ -50,14 +50,21 @@ public class ChatHub : Hub {
     public async Task GiveEmoji(int messageId, string emoji)
     {
         var httpContext = Context.GetHttpContext();
-        var userId = httpContext.Session.GetString("UserId");
-        
+        if (httpContext == null)
+            throw new InvalidOperationException("HttpContext is null");
+
+        var userIdString = httpContext.Session.GetString("UserId");
+        if (string.IsNullOrEmpty(userIdString))
+            throw new InvalidUserIdException("UserId is missing from session");
+
+        if (!int.TryParse(userIdString, out var userId))
+            throw new InvalidUserIdException("UserId from session is invalid");
 
         var reaction = new Reaction
         {
             MessageId = messageId,
-            UserId = int.Parse(userId),
-            Emoji = emoji,
+            UserId = userId,
+            Emoji = emoji
         };
 
         _context.Reactions.Add(reaction);
