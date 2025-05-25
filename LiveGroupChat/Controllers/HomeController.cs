@@ -24,7 +24,7 @@ namespace LiveGroupChat.Controllers
                 return Redirect("/account/login");
             }
 
-            var messages = _homeService.GetAllMessages();
+            var messages = _homeService.GetAllMessagesAsync();
 
             var mappedMessages = messages.Select(message => new MessageViewModel()
             {

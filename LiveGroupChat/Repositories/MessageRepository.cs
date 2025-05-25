@@ -12,25 +12,31 @@ public class MessageRepository
         _context = context;
     }
 
-    public List<Message> GetAllWithRelations()
+    public async Task<List<Message>> GetAllWithRelationsAsync()
     {
-        return _context.Messages.Include(m => m.User)
+        return await _context.Messages
+            .Include(m => m.User)
             .Include(m => m.Reactions)
-            .ToList();
+            .ToListAsync();
     }
 
-    public void RemoveAll()
+    public async Task RemoveAllAsync()
     {
         _context.Messages.RemoveRange(_context.Messages);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public int Count() => _context.Messages.Count();
-
-    public Message Add(Message message)
+    public async Task<int> CountAsync()
     {
-        _context.Messages.Add(message);
-        _context.SaveChanges();
+        return await _context.Messages.CountAsync();
+    }
+
+    public async Task<Message> AddAsync(Message message)
+    {
+        if (message == null) throw new ArgumentNullException(nameof(message));
+
+        await _context.Messages.AddAsync(message);
+        await _context.SaveChangesAsync();
         return message;
     }
 }

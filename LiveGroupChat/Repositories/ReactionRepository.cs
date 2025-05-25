@@ -1,4 +1,5 @@
 ﻿using LiveGroupChat.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace LiveGroupChat.Repositories;
 
@@ -11,15 +12,18 @@ public class ReactionRepository
         _context = context;
     }
 
-    public Reaction? GetByMessageAndUser(int messageId, int userId)
+    public async Task<Reaction?> GetByMessageAndUserAsync(int messageId, int userId)
     {
-        return _context.Reactions.FirstOrDefault(r => r.MessageId == messageId && r.UserId == userId);
+        return await _context.Reactions
+            .FirstOrDefaultAsync(r => r.MessageId == messageId && r.UserId == userId);
     }
 
-    public Reaction Add(Reaction reaction)
+    public async Task<Reaction> AddAsync(Reaction reaction)
     {
-        _context.Reactions.Add(reaction);
-        _context.SaveChanges();
+        if (reaction == null) throw new ArgumentNullException(nameof(reaction));
+
+        await _context.Reactions.AddAsync(reaction);
+        await _context.SaveChangesAsync();
         return reaction;
     }
 }

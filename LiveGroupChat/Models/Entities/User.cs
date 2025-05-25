@@ -5,5 +5,5 @@ public class User
 
     
     public int Id { get; set; }
-    public String? Nickname{get;set;}
+    public string Nickname{get;set;}
 }

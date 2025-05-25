@@ -1,24 +1,28 @@
 ﻿using LiveGroupChat.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace LiveGroupChat.Repositories ;
-    public class UserRepository {
-        private readonly AppDbContext _context;
+namespace LiveGroupChat.Repositories;
 
-        public UserRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+public class UserRepository
+{
+    private readonly AppDbContext _context;
 
-        public User? GetById(int id)
-        {
-            return _context.Users.FirstOrDefault(u => u.Id == id);
-        }
-
-        public User Add(User user)
-        {
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            return user;
-        }
-
+    public UserRepository(AppDbContext context)
+    {
+        _context = context;
     }
+
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<User> AddAsync(User user)
+    {
+        if (user == null) throw new ArgumentNullException(nameof(user));
+
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
+        return user;
+    }
+}

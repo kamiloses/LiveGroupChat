@@ -1,6 +1,6 @@
-﻿
-using LiveGroupChat.Models.Entities;
+﻿using LiveGroupChat.Models.Entities;
 using LiveGroupChat.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace LiveGroupChat.Services;
 
@@ -15,14 +15,28 @@ public class AccountService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public User Login(string nickname)
+    public async Task<User> LoginAsync(string nickname)
     {
-        var user = new User { Nickname = nickname + Random.Shared.Next(0, 100) };
-        var addedUser = _userRepository.Add(user);
+        if (string.IsNullOrWhiteSpace(nickname))
+        {
+            throw new ArgumentException("Nickname cannot be empty.", nameof(nickname));
+        }
 
-        _httpContextAccessor.HttpContext.Session.SetString("UserId", addedUser.Id.ToString());
+        var user = new User
+        {
+            Nickname = nickname + Random.Shared.Next(0, 100)
+        };
+
+        var addedUser = await _userRepository.AddAsync(user);
+
+        var httpContext = _httpContextAccessor.HttpContext;
+        if (httpContext == null)
+        {
+            throw new InvalidOperationException("HTTP context is not available.");
+        }
+
+        httpContext.Session.SetString("UserId", addedUser.Id.ToString());
 
         return addedUser;
     }
 }
-

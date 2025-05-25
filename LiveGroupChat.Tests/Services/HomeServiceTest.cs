@@ -88,7 +88,7 @@ namespace LiveGroupChat.Tests.Services
             var userRepo = new UserRepository(ctx);
             var service = new HomeService(messageRepo, userRepo, MockHttpContextAccessor("2"));
 
-            var messages = service.GetAllMessages();
+            var messages = service.GetAllMessagesAsync();
 
             Assert.Single(messages);
             Assert.Equal("Hello", messages[0].Text);
