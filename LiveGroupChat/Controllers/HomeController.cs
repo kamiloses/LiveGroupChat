@@ -1,41 +1,38 @@
-﻿using LiveGroupChat.Models.ViewModels;
+﻿using LiveGroupChat.Models.Entities;
+using LiveGroupChat.Models.ViewModels;
 using LiveGroupChat.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using LiveGroupChat.Models.Entities;
 
-namespace LiveGroupChat.Controllers
+namespace LiveGroupChat.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly HomeService _homeService;
+
+    public HomeController(HomeService homeService)
     {
-        private readonly HomeService _homeService;
+        _homeService = homeService;
+    }
 
-        public HomeController(HomeService homeService)
+    [Route("/home")]
+    public async Task<IActionResult> Home()
+    {
+        var userIdString = HttpContext.Session.GetString("UserId");
+        if (string.IsNullOrEmpty(userIdString))
         {
-            _homeService = homeService;
+            return Redirect("/account/login");
         }
 
-        [Route("/home")]
-        public IActionResult Home()
+        var messages = await _homeService.GetAllMessagesAsync();
+
+        var mappedMessages = messages.Select(message => new MessageViewModel
         {
-            var userIdString = HttpContext.Session.GetString("UserId");
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Redirect("/account/login");
-            }
+            Id = message.Id,
+            Text = message.Text,
+            User = message.User,
+            Reactions = message.Reactions?.ToList() ?? new()
+        }).ToList();
 
-            var messages = _homeService.GetAllMessagesAsync();
-
-            var mappedMessages = messages.Select(message => new MessageViewModel()
-            {
-                Id = message.Id,
-                User = message.User,
-              //  Created = DateTime.Now, 
-                Text = message.Text,
-                Reactions = message.Reactions?.ToList() ?? new List<Reaction>()
-            }).ToList();
-
-            return View(mappedMessages);
-        }
+        return View(mappedMessages);
     }
 }

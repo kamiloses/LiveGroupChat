@@ -1,41 +1,41 @@
 ﻿using LiveGroupChat.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace LiveGroupChat.Controllers;
 
-public class AccountController : Controller{
-
-private AppDbContext _context;
-private IHttpContextAccessor _httpContextAccessor;
-
-
-public AccountController(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+public class AccountController : Controller
 {
-    _context = context;
-    _httpContextAccessor = httpContextAccessor;
-}
+    private readonly AppDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-[Route("/account/login")]
-public IActionResult Login(){
-    return View();
-}
+    public AccountController(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+    {
+        _context = context;
+        _httpContextAccessor = httpContextAccessor;
+    }
 
+    [Route("/account/login")]
+    public IActionResult Login()
+    {
+        return View();
+    }
 
-[Route("/account/login")]
-[HttpPost]
-public IActionResult Login(string nickname)
-{
-    Console.BackgroundColor = ConsoleColor.Green;
-    Console.WriteLine(nickname);
+    [HttpPost]
+    [Route("/account/login")]
+    public IActionResult Login(string nickname)
+    {
+        if (string.IsNullOrWhiteSpace(nickname))
+        {
+            ModelState.AddModelError("nickname", "Nickname is required.");
+            return View();
+        }
 
-    var user = _context.Users.Add(new User() { Nickname =nickname });
-    _context.SaveChanges();
+        var user = new User { Nickname = nickname };
+        _context.Users.Add(user);
+        _context.SaveChanges();
 
-    _httpContextAccessor.HttpContext.Session.SetString("UserId", user.Entity.Id.ToString());
+        _httpContextAccessor.HttpContext?.Session.SetString("UserId", user.Id.ToString());
 
-    return RedirectToAction("Home", "Home");
-}
-
-
+        return RedirectToAction("Home", "Home");
+    }
 }

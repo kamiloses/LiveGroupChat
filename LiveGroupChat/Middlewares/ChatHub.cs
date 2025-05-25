@@ -1,4 +1,5 @@
-﻿using LiveGroupChat.Models.Entities;
+﻿using LiveGroupChat.Exceptions;
+using LiveGroupChat.Models.Entities;
 using LiveGroupChat.Models.ViewModels;
 using LiveGroupChat.Services;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,19 @@ public class ChatHub : Hub {
     public async Task SendMessage(string message)
     {
         var httpContext = Context.GetHttpContext();
+        if (httpContext == null)
+            throw new InvalidOperationException("HttpContext is null");
+
         var userIdString = httpContext.Session.GetString("UserId");
+        if (string.IsNullOrEmpty(userIdString))
+            throw new InvalidUserIdException("UserId is missing from session");
 
-        if (string.IsNullOrEmpty(userIdString)) return;
+        if (!int.TryParse(userIdString, out var userId))
+            throw new InvalidUserIdException("UserId from session is invalid");
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == int.Parse(userIdString));
-    
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+            throw new InvalidUserIdException("User not found");
 
         var messageEntity = new Message
         {
@@ -36,9 +44,8 @@ public class ChatHub : Hub {
         await _context.SaveChangesAsync();
 
         await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id);
-        
-        
     }
+
 
     public async Task GiveEmoji(int messageId, string emoji)
     {
