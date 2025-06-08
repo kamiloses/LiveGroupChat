@@ -24,12 +24,6 @@ public class AccountController : Controller
     [Route("/account/login")]
     public IActionResult Login(string nickname)
     {
-        if (string.IsNullOrWhiteSpace(nickname))
-        {
-            ModelState.AddModelError("nickname", "Nickname is required.");
-            return View();
-        }
-
         var user = new User { Nickname = nickname };
         _context.Users.Add(user);
         _context.SaveChanges();
