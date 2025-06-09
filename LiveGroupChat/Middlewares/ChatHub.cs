@@ -49,6 +49,9 @@ public class ChatHub : Hub {
 
     public async Task GiveEmoji(int messageId, string emoji)
     {
+        Console.BackgroundColor = ConsoleColor.Green;
+        Console.WriteLine("WYKONUJE");
+        
         var httpContext = Context.GetHttpContext();
         if (httpContext == null)
             throw new InvalidOperationException("HttpContext is null");
