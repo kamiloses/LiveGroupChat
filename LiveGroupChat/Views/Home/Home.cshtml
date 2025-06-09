@@ -1,7 +1,6 @@
 ﻿@model List<LiveGroupChat.Models.ViewModels.MessageViewModel>
-
 @{
-ViewData["Title"] = "Home - Czat";
+    ViewData["Title"] = "Home - Czat";
 }
 
 <!DOCTYPE html>
@@ -10,9 +9,14 @@ ViewData["Title"] = "Home - Czat";
     <meta charset="UTF-8">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/home.css">
-   
+    <style>
+        .own-message {
+            background-color: #e0ffe0;
+            border-left: 4px solid green;
+        }
+    </style>
 </head>
-<body>
+<body data-user-id="@ViewBag.CurrentUserId">
 <div class="chat-container">
     <div class="chat-box">
         <div class="chat-header">
@@ -22,43 +26,37 @@ ViewData["Title"] = "Home - Czat";
             <div class="message-container">
                 @foreach (var message in Model)
                 {
-                <div class="message left" data-message-id="@message.Id">
-                    <div style="font-size: 0.9em; color: #ccc;">
-                        @if (message.User != null)
-                        {
-                        <strong>@message.User.Nickname</strong>
-                        }
-                        else
-                        {
-                        <strong>Unknown user</strong>
-                        }
-                    </div>
+                    <div class="message-left" data-message-id="@message.Id" data-user-id="@message.User?.Id">
+                        <div style="font-size: 0.9em; color: #ccc;">
+                            <strong>@(message.User?.Nickname ?? "Unknown user")</strong>
+                        </div>
 
-                    <div class="message-content">
-                        @message.Text
+                        <div class="message-content">
+                            @message.Text
 
-                        <div class="reaction-button-wrapper">
-                            <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
-                            <div class="reaction-popup">
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="❤️">❤️</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😂">😂</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👍">👍</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😮">😮</button>
-                                <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👎">👎</button>
+                            <div class="reaction-button-wrapper">
+                                <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
+                                <div class="reaction-popup">
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="❤️">❤️</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😂">😂</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👍">👍</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="😮">😮</button>
+                                    <button type="button" class="emoji-button" data-message-id="@message.Id" data-emoji="👎">👎</button>
+                                </div>
+                            </div>
+
+                            <div class="reactions">
+                                @foreach (var reaction in message.Reactions)
+                                {
+                                    <span style="font-size: 1.3em;">@reaction.Emoji</span>
+                                }
                             </div>
                         </div>
-
-                        <div class="reactions">
-                            @foreach (var reaction in message.Reactions)
-                            {
-                            <span style="font-size: 1.3em;">@reaction.Emoji</span>
-                            }
-                        </div>
                     </div>
-                </div>
                 }
             </div>
         </div>
+
         <div class="chat-footer">
             <form id="messageForm" asp-action="WriteMessage" method="post" style="display:flex; width: 100%;">
                 <input type="text" name="Text" placeholder="Send Message..." class="chat-input" autocomplete="off" />
@@ -68,8 +66,10 @@ ViewData["Title"] = "Home - Czat";
     </div>
 </div>
 
+
 <script src="/js/signalr.min.js"></script>
 <script src="/js/chat.js"></script>
+<script src="/js/logic.js"></script>
 
 </body>
 </html>

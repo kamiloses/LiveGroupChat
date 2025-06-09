@@ -16,3 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
         else errorMessage.textContent = '';
     });
 });
+
+
+const currentUserId = document.body.dataset.userId;
+
+document.querySelectorAll(".message-left").forEach(msgEl => {
+    const messageUserId = msgEl.getAttribute("data-user-id");
+
+    if (messageUserId === currentUserId) {
+        msgEl.classList.remove("message-left");
+        msgEl.classList.add("message-right");
+    }
+});

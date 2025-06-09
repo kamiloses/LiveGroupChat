@@ -52,23 +52,27 @@
     flex-direction: column;
 }
 
-.message {
+.message-left {
     margin: 10px 0;
     padding: 10px;
     border-radius: 10px;
     max-width: 70%;
     align-self: flex-start;
+    background-color: red;
 }
 
-.message.right {
-    background-color: #4CAF50;
+.message-right {
+    background-color: greenyellow;
     align-self: flex-end;
+
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+    
+    
 }
 
-.message.left {
-    background-color: #444;
-    align-self: flex-start;
-}
 
 .chat-footer {
     display: flex;
@@ -151,4 +155,10 @@
 
 .reaction-popup span:hover {
     transform: scale(1.2);
+}
+
+.own-message{
+    color: red;
+    background-color: #4CAF50;
+    
 }

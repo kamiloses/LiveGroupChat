@@ -25,15 +25,9 @@ function connectToWebsockets() {
             document.querySelector(".send-btn").addEventListener("click", function (event) {
                 event.preventDefault();
                 let message = document.querySelector(".chat-input").value;
-                connection.invoke("SendMessage", message)
-                    .then(() => {
-                        console.log("SENT MESSAGE");
-                    })
-                    .catch(err => {
-                        console.error("Error sending message: ", err);
-                    });
-            });
-
+                 connection.invoke("SendMessage", message)});
+            
+             
         })
         .catch(err => console.error("SignalR connection error: ", err));
 }

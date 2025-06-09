@@ -32,6 +32,8 @@ public class HomeController : Controller
             User = message.User,
             Reactions = message.Reactions?.ToList() ?? new()
         }).ToList();
+        
+        ViewBag.CurrentUserId = userIdString;
 
         return View(mappedMessages);
     }
