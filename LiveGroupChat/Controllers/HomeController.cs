@@ -1,5 +1,4 @@
-﻿using LiveGroupChat.Models.Entities;
-using LiveGroupChat.Models.ViewModels;
+﻿using LiveGroupChat.Models.ViewModels;
 using LiveGroupChat.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +29,7 @@ public class HomeController : Controller
             Id = message.Id,
             Text = message.Text,
             User = message.User,
-            Reactions = message.Reactions?.ToList() ?? new()
+            Reactions = message.Reactions.ToList() 
         }).ToList();
         
         ViewBag.CurrentUserId = userIdString;

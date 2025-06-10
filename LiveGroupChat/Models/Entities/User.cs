@@ -1,9 +1,10 @@
-﻿namespace LiveGroupChat.Models.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LiveGroupChat.Models.Entities;
 
 public class User
 {
-
-    
     public int Id { get; set; }
-    public string Nickname{get;set;}
-}
+    
+    [StringLength(15)]
+    public string? Nickname { get; set; } }

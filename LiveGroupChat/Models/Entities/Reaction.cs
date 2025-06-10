@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace LiveGroupChat.Models.Entities
 {
@@ -7,13 +6,13 @@ namespace LiveGroupChat.Models.Entities
     {
         public int Id { get; set; }
 
-        
+        [StringLength(15)]
         public string Emoji { get; set; } = "";
         public int UserId { get; set; }
-        public User User { get; set; } 
+        public User? User { get; set; } 
 
         public int MessageId { get; set; }
-        public Message Message { get; set; }
+        public Message? Message { get; set; }
     }
 }
 

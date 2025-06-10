@@ -1,42 +1,24 @@
 ﻿using LiveGroupChat.Models.Entities;
-using LiveGroupChat.Repositories;
-using Microsoft.AspNetCore.Http;
-
 namespace LiveGroupChat.Services;
 
 public class AccountService
 {
-    private readonly UserRepository _userRepository;
+    private readonly AppDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AccountService(UserRepository userRepository, IHttpContextAccessor httpContextAccessor)
+    public AccountService(AppDbContext context, IHttpContextAccessor httpContextAccessor)
     {
-        _userRepository = userRepository;
+        _context = context;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<User> LoginAsync(string nickname)
-    {
-        if (string.IsNullOrWhiteSpace(nickname))
-        {
-            throw new ArgumentException("Nickname cannot be empty.", nameof(nickname));
-        }
+    public async Task<User> LoginAsync(string nickname) {
+        
+        var user = new User { Nickname = nickname };
+        _context.Users.Add(user);
+       await _context.SaveChangesAsync();
 
-        var user = new User
-        {
-            Nickname = nickname + Random.Shared.Next(0, 100)
-        };
-
-        var addedUser = await _userRepository.AddAsync(user);
-
-        var httpContext = _httpContextAccessor.HttpContext;
-        if (httpContext == null)
-        {
-            throw new InvalidOperationException("HTTP context is not available.");
-        }
-
-        httpContext.Session.SetString("UserId", addedUser.Id.ToString());
-
-        return addedUser;
+        _httpContextAccessor.HttpContext?.Session.SetString("UserId", user.Id.ToString());
+        return user;
     }
 }

@@ -1,17 +1,16 @@
 ﻿using LiveGroupChat.Models.Entities;
+using LiveGroupChat.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LiveGroupChat.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly AppDbContext _context;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly AccountService _accountService;
 
-    public AccountController(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+    public AccountController(AccountService accountService)
     {
-        _context = context;
-        _httpContextAccessor = httpContextAccessor;
+        _accountService = accountService;
     }
 
     [Route("/account/login")]
@@ -22,13 +21,9 @@ public class AccountController : Controller
 
     [HttpPost]
     [Route("/account/login")]
-    public IActionResult Login(string nickname)
+    public async Task<IActionResult> Login(string nickname)
     {
-        var user = new User { Nickname = nickname };
-        _context.Users.Add(user);
-        _context.SaveChanges();
-
-        _httpContextAccessor.HttpContext?.Session.SetString("UserId", user.Id.ToString());
+        await _accountService.LoginAsync(nickname);
 
         return RedirectToAction("Home", "Home");
     }

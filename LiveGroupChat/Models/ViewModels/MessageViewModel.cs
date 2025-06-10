@@ -9,7 +9,7 @@ public class MessageViewModel
     public string? Text { get; set; }
     public User? User { get; set; }
     
-    public List<Reaction> Reactions { get; set; } =new();
+    public List<Reaction>? Reactions { get; set; } =new();
 
     
     }

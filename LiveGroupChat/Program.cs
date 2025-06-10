@@ -8,6 +8,7 @@ builder.WebHost.UseUrls("http://0.0.0.0:5001");
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<MessageRepository>();
 builder.Services.AddScoped<HomeService>();
+builder.Services.AddScoped<AccountService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();

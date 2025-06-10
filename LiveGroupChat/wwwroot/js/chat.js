@@ -105,7 +105,7 @@ function updateReactions(messageId, emoji) {
 
     if (!messageDiv) {
         console.warn(`Message with ID ${messageId} not found. Waiting for it to be created...`);
-        return;
+        return;//todo sprawdz
     }
 
     const reactionsDiv = messageDiv.querySelector(".reactions");

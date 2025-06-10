@@ -1,15 +1,13 @@
 ﻿using LiveGroupChat.Exceptions;
 using LiveGroupChat.Models.Entities;
-using LiveGroupChat.Models.ViewModels;
-using LiveGroupChat.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace LiveGroupChat.Middlewares;
 
 using Microsoft.AspNetCore.SignalR;
 
-public class ChatHub : Hub {
-    
+public class ChatHub : Hub
+{
     private readonly AppDbContext _context;
 
     public ChatHub(AppDbContext context)
@@ -19,16 +17,17 @@ public class ChatHub : Hub {
 
     public async Task SendMessage(string message)
     {
-        var httpContext = Context.GetHttpContext();
+        HttpContext? httpContext = Context.GetHttpContext();
         if (httpContext == null)
             throw new InvalidOperationException("HttpContext is null");
 
-        var userIdString = httpContext.Session.GetString("UserId");
+        string? userIdString = httpContext.Session.GetString("UserId");
         if (string.IsNullOrEmpty(userIdString))
             throw new InvalidUserIdException("UserId is missing from session");
 
-        if (!int.TryParse(userIdString, out var userId))
-            throw new InvalidUserIdException("UserId from session is invalid");
+        
+        int userId = int.Parse(userIdString);
+        
 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null)
@@ -39,31 +38,26 @@ public class ChatHub : Hub {
             Text = message,
             UserId = user.Id,
         };
-        
+
         _context.Messages.Add(messageEntity);
         await _context.SaveChangesAsync();
- 
-        Console.BackgroundColor = ConsoleColor.Green;
-        
-        await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id,messageEntity.UserId);
+
+
+        await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id, messageEntity.UserId);
     }
 
 
     public async Task GiveEmoji(int messageId, string emoji)
     {
-        Console.BackgroundColor = ConsoleColor.Green;
-        Console.WriteLine("WYKONUJE");
-        
-        var httpContext = Context.GetHttpContext();
+        HttpContext? httpContext = Context.GetHttpContext();
         if (httpContext == null)
             throw new InvalidOperationException("HttpContext is null");
 
-        var userIdString = httpContext.Session.GetString("UserId");
+        string? userIdString = httpContext.Session.GetString("UserId");
         if (string.IsNullOrEmpty(userIdString))
             throw new InvalidUserIdException("UserId is missing from session");
 
-        if (!int.TryParse(userIdString, out var userId))
-            throw new InvalidUserIdException("UserId from session is invalid");
+        int userId = int.Parse(userIdString);
 
         var reaction = new Reaction
         {
@@ -77,6 +71,4 @@ public class ChatHub : Hub {
 
         await Clients.All.SendAsync("ReceiveEmoji", messageId, emoji);
     }
-
-    
 }
