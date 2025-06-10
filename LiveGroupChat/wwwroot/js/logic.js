@@ -11,18 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nickname === '' || nickname.length < 3) {
             e.preventDefault();
             errorMessage.textContent='Nickname must be at least 3 characters long';
-            console.log("DZIAŁA")
         }
         else errorMessage.textContent = '';
     });
 });
 
 
-const currentUserId = document.body.dataset.userId;
+const currentUserId = document.getElementById('user-id').getAttribute('data-user-id');
 
 document.querySelectorAll(".message-left").forEach(msgEl => {
     const messageUserId = msgEl.getAttribute("data-user-id");
-
     if (messageUserId === currentUserId) {
         msgEl.classList.remove("message-left");
         msgEl.classList.add("message-right");

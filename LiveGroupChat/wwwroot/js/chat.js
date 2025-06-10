@@ -21,12 +21,14 @@ function connectToWebsockets() {
         .withUrl("/ws")
         .build();
 
-    connection.on("ReceiveMessage", (username, message, messageId) => {
-        console.log(message);
+    connection.on("ReceiveMessage", (username, message,messageId, messageUserId) => {
+        createMessageContainer(username, message, messageId,messageUserId);
+        
     });
 
     connection.on("ReceiveEmoji", (messageId,emoji) => {
         console.log(emoji);
+        
     });
     
 
@@ -59,3 +61,44 @@ function connectToWebsockets() {
         .catch(err => console.error("SignalR connection error: ", err));
 }
 
+
+
+
+function createMessageContainer(username, message, messageId, messageUserId) {
+
+    const myUserId = document.getElementById('user-id').getAttribute('data-user-id');
+    const messageContainer = document.querySelector(".message-container");
+    const messageDiv = document.createElement("div");
+
+    if (myUserId == messageUserId) {
+        messageDiv.classList.add("message-right");
+    } else{
+        messageDiv.classList.add("message-left");
+        
+    }
+        
+        
+        
+        messageDiv.innerHTML = `
+            <div style="font-size: 0.9em; color: #ccc;">
+                <strong>${username}</strong>
+            </div>
+            <div class="message-content">
+                 ${message}
+                <div class="reaction-button-wrapper">
+                    <span class="reaction-button" onclick="toggleReactions(this)">➕</span>
+                    <div class="reaction-popup">
+                        ${['❤️', '😂', '👍', '😮', '👎'].map(emoji => `
+                            <button type="button"
+                                class="emoji-button"
+                                data-message-id="${messageId}"
+                                data-emoji="${emoji}"
+                                style="background:none; border:none; font-size:1.3em; cursor:pointer;">
+                                ${emoji}
+                            </button>`).join('')}
+                    </div>
+                </div>
+                <div class="reactions"></div>
+            </div>`;
+    
+            messageContainer.appendChild(messageDiv);}

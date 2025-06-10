@@ -39,11 +39,13 @@ public class ChatHub : Hub {
             Text = message,
             UserId = user.Id,
         };
-
+        
         _context.Messages.Add(messageEntity);
         await _context.SaveChangesAsync();
-
-        await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id);
+ 
+        Console.BackgroundColor = ConsoleColor.Green;
+        
+        await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id,messageEntity.UserId);
     }
 
 

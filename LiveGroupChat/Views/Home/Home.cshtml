@@ -16,7 +16,8 @@
         }
     </style>
 </head>
-<body data-user-id="@ViewBag.CurrentUserId">
+<body >
+<div id="user-id" style="display: none;" data-user-id="@ViewBag.CurrentUserId"></div>
 <div class="chat-container">
     <div class="chat-box">
         <div class="chat-header">
@@ -59,7 +60,7 @@
 
         <div class="chat-footer">
             <form id="messageForm" asp-action="WriteMessage" method="post" style="display:flex; width: 100%;">
-                <input type="text" name="Text" placeholder="Send Message..." class="chat-input" autocomplete="off" />
+                <input type="text" name="Text" placeholder="Send Message..." class="chat-input" autocomplete="off"/>
                 <button type="submit" class="send-btn">Send</button>
             </form>
         </div>
