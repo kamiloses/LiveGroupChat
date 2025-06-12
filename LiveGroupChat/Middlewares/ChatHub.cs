@@ -1,7 +1,7 @@
 ﻿using LiveGroupChat.Exceptions;
 using LiveGroupChat.Models.Entities;
+using LiveGroupChat.Repositories;
 using LiveGroupChat.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace LiveGroupChat.Middlewares;
 
@@ -9,13 +9,15 @@ using Microsoft.AspNetCore.SignalR;
 
 public class ChatHub : Hub
 {
-    private readonly AppDbContext _context;
     private readonly HomeService _homeService;
-
-    public ChatHub(AppDbContext context, HomeService homeService)
+    private readonly ReactionRepository _reactionRepository;
+    private readonly UserRepository _userRepository;
+    
+    public ChatHub(HomeService homeService, ReactionRepository reactionRepository, UserRepository userRepository)
     {
-        _context = context;
         _homeService = homeService;
+        _reactionRepository = reactionRepository;
+        _userRepository = userRepository;
     }
 
     public async Task SendMessage(string message)
@@ -30,11 +32,9 @@ public class ChatHub : Hub
 
         
         int userId = int.Parse(userIdString);
-        
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        if (user == null)
-            throw new InvalidUserIdException("User not found");
+       User user= await _userRepository.FindById(userId);
+    
 
         var messageEntity = new Message
         {
@@ -67,8 +67,7 @@ public class ChatHub : Hub
             Emoji = emoji
         };
 
-        _context.Reactions.Add(reaction);
-        await _context.SaveChangesAsync();
+         await _reactionRepository.SaveReactionAsync(reaction);
 
         await Clients.All.SendAsync("ReceiveEmoji", messageId, emoji);
     }

@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5001");
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<MessageRepository>();
+builder.Services.AddScoped<ReactionRepository>();
 builder.Services.AddScoped<HomeService>();
 builder.Services.AddScoped<AccountService>();
 

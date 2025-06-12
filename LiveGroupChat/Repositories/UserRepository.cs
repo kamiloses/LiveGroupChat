@@ -1,4 +1,5 @@
-﻿using LiveGroupChat.Models.Entities;
+﻿using LiveGroupChat.Exceptions;
+using LiveGroupChat.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace LiveGroupChat.Repositories;
@@ -25,4 +26,16 @@ public class UserRepository
         await _context.SaveChangesAsync();
         return user;
     }
+
+    public async Task<User> FindById(int userId)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+            throw new InvalidUserIdException("User not found");
+        
+        return user;
+    }
+    
+    
+    
 }
