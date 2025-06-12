@@ -20,6 +20,7 @@ public class MessageRepository
             .ToListAsync();
     }
 
+
     public async Task RemoveAllAsync()
     {
         _context.Messages.RemoveRange(_context.Messages);
@@ -31,11 +32,9 @@ public class MessageRepository
         return await _context.Messages.CountAsync();
     }
 
-    public async Task<Message> AddAsync(Message message)
+    public async Task<Message> SaveMessageAsync(Message message)
     {
-        if (message == null) throw new ArgumentNullException(nameof(message));
-
-        await _context.Messages.AddAsync(message);
+         _context.Add(message);
         await _context.SaveChangesAsync();
         return message;
     }

@@ -1,97 +1,66 @@
-﻿using System.Text;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using LiveGroupChat.Models.Entities;
 using LiveGroupChat.Repositories;
 using LiveGroupChat.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using Xunit;
-using System.Threading.Tasks;
 
 namespace LiveGroupChat.Tests.Services
 {
     public class HomeServiceTests
     {
-        private ISession MockSession(string userId)
+        private readonly MessageRepository _messageRepository;
+        private readonly AppDbContext _context;
+        private readonly HomeService _homeService;
+
+        public HomeServiceTests()
         {
-            var session = new Mock<ISession>();
-            byte[] userIdBytes = Encoding.UTF8.GetBytes(userId);
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
+            var options = optionsBuilder.Options;
 
-            session.Setup(s => s.TryGetValue("UserId", out userIdBytes)).Returns(true);
+            
+            _context = new AppDbContext(options);
+            _messageRepository = new MessageRepository(_context);
+            _homeService = new HomeService(_messageRepository);
+            
+            
 
-            return session.Object;
+            User user = new User() { Id = 1, Nickname = "kamiloses" };
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            Message message = new Message()
+            {
+                Text = "text",
+                UserId = user.Id,
+                User = user,
+                Reactions = new List<Reaction>
+                {
+                    new Reaction { Emoji = "😮" },
+                    new Reaction { Emoji = "❤️" }
+                }
+            };
+            _context.Messages.Add(message);
+            _context.SaveChanges();
         }
 
-        private IHttpContextAccessor MockHttpContextAccessor(string userId)
+        [Fact] // todo  ChatHub ogarnąć,HomeController
+        public async Task Should_GetAllMessagesAsync()
         {
-            var ctx = new Mock<HttpContext>();
-            ctx.Setup(c => c.Session).Returns(MockSession(userId));
-            var accessor = new Mock<IHttpContextAccessor>();
-            accessor.Setup(a => a.HttpContext).Returns(ctx.Object);
-            return accessor.Object;
+            List<Message> messages = await _homeService.GetAllMessagesAsync();
+            Assert.True(messages.Count == 1);
+            Assert.NotNull(messages[0].User);                            
+            Assert.Equal("kamiloses", messages[0].User.Nickname);       
+            Assert.Equal(2, messages[0].Reactions.Count);                
+            Assert.Contains(messages[0].Reactions, r => r.Emoji == "😮");
+            Assert.Contains(messages[0].Reactions, r => r.Emoji == "❤️");
+            
         }
 
-        [Fact]
-        public async Task GetAllMessages_CreatesUser_IfNotExists()
-        {
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("TestDb1").Options;
-
-            await using var ctx = new AppDbContext(options);
-            var messageRepo = new MessageRepository(ctx);
-            var userRepo = new UserRepository(ctx);
-
-            var service = new HomeService(messageRepo, userRepo, MockHttpContextAccessor("10"));
-
-            var messages = await service.GetAllMessagesAsync();
-
-            Assert.True(ctx.Users.Any(u => u.Id == 10));
-        }
-
-        [Fact]
-        public async Task GetAllMessages_RemovesMessages_When6OrMore()
-        {
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("TestDb2").Options;
-
-            await using var ctx = new AppDbContext(options);
-            ctx.Users.Add(new User { Id = 1, Nickname = "TestUser" });  
-            for (int i = 0; i < 6; i++)
-                ctx.Messages.Add(new Message { UserId = 1, Text = $"Msg{i}" });
-            await ctx.SaveChangesAsync();
-
-            var messageRepo = new MessageRepository(ctx);
-            var userRepo = new UserRepository(ctx);
-            var service = new HomeService(messageRepo, userRepo, MockHttpContextAccessor("1"));
-
-            await service.GetAllMessagesAsync();
-
-            ctx.ChangeTracker.Clear();
-
-            Assert.Empty(ctx.Messages);
-        }
-
-        [Fact]
-        public async Task GetAllMessages_ReturnsAllMessages()
-        {
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("TestDb3").Options;
-
-            await using var ctx = new AppDbContext(options);
-            var user = new User { Id = 2, Nickname = "User2" };
-            ctx.Users.Add(user);
-            ctx.Messages.Add(new Message { Text = "Hello", UserId = 2 });
-            await ctx.SaveChangesAsync();
-
-            var messageRepo = new MessageRepository(ctx);
-            var userRepo = new UserRepository(ctx);
-            var service = new HomeService(messageRepo, userRepo, MockHttpContextAccessor("2"));
-
-            var messages = await service.GetAllMessagesAsync();
-
-            Assert.Single(messages);
-            Assert.Equal("Hello", messages[0].Text);
-        }
+   
     }
 }

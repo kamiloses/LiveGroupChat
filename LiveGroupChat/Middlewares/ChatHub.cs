@@ -1,5 +1,6 @@
 ﻿using LiveGroupChat.Exceptions;
 using LiveGroupChat.Models.Entities;
+using LiveGroupChat.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace LiveGroupChat.Middlewares;
@@ -9,10 +10,12 @@ using Microsoft.AspNetCore.SignalR;
 public class ChatHub : Hub
 {
     private readonly AppDbContext _context;
+    private readonly HomeService _homeService;
 
-    public ChatHub(AppDbContext context)
+    public ChatHub(AppDbContext context, HomeService homeService)
     {
         _context = context;
+        _homeService = homeService;
     }
 
     public async Task SendMessage(string message)
@@ -39,9 +42,7 @@ public class ChatHub : Hub
             UserId = user.Id,
         };
 
-        _context.Messages.Add(messageEntity);
-        await _context.SaveChangesAsync();
-
+           await _homeService.SendMessage(messageEntity);
 
         await Clients.All.SendAsync("ReceiveMessage", user.Nickname, message, messageEntity.Id, messageEntity.UserId);
     }

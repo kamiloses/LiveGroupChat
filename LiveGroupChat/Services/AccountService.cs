@@ -13,7 +13,6 @@ public class AccountService
     }
 
     public async Task<User> LoginAsync(string nickname) {
-        
         var user = new User { Nickname = nickname };
         _context.Users.Add(user);
        await _context.SaveChangesAsync();
